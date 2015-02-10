@@ -5,9 +5,9 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice-opengles_2_0/renderdevice.h>
-#include <nimble/renderdevice-opengles_2_0/framebuffer.h>
-#include <nimble/renderdevice-opengles_2_0/mappings.h>
+#include <nimble/renderdevice/opengles_2_0/renderdevice.h>
+#include <nimble/renderdevice/opengles_2_0/framebuffer.h>
+#include <nimble/renderdevice/opengles_2_0/mappings.h>
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -43,13 +43,13 @@ void RenderDevice::draw(){
     glDrawElements(mode, count, GL_UNSIGNED_SHORT, 0);
 }
 //! draws with current state
-void RenderDevice::draw(core::UInt32 startIndex, core::UInt32 numIndices){
+void RenderDevice::draw(uint32_t startIndex, uint32_t numIndices){
     renderdevice::IIndexBuffer *pIndexBuffer = m_context.m_pIndexBuffer;
     core::assert_error(pIndexBuffer != NULL);
     
     // draw data
-    core::UInt32 mode = gIndexFormatMap[pIndexBuffer->getPrimitiveType()];
-    core::UInt32 count = numIndices;
+    uint32_t mode = gIndexFormatMap[pIndexBuffer->getPrimitiveType()];
+    uint32_t count = numIndices;
     
     // OpenGL ES 2.0 doesn't support QUAD LISTS
     core::assert_error(mode != renderdevice::IIndexBuffer::kPrimitiveQuadList);

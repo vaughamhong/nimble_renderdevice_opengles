@@ -5,88 +5,119 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_renderdevice_h__
-#define __nimble_renderdevice_opengles_2_0_renderdevice_h__
+#ifndef __nimble_renderdevice_opengles_3_0_renderdevice_h__
+#define __nimble_renderdevice_opengles_3_0_renderdevice_h__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/common.h>
+#include <nimble/renderdevice/opengles_3_0/common.h>
 #include <nimble/renderdevice/irenderdevice.h>
-#include <nimble/core/allocator.stl.h>
 #include <nimble/math/rect.h>
 #include <vector>
 
 //////////////////////////////////////////////////////////////////////////
 
+#define SHADERPARAM_TUPLESET \
+SHADERPARAM_TUPLE(Normal,                "r_normalMatrix") \
+SHADERPARAM_TUPLE(Model,                 "r_model") \
+SHADERPARAM_TUPLE(View,                  "r_view") \
+SHADERPARAM_TUPLE(InvView,               "r_invView") \
+SHADERPARAM_TUPLE(Projection,            "r_projection") \
+SHADERPARAM_TUPLE(ModelView,             "r_modelView") \
+SHADERPARAM_TUPLE(ModelViewProjection,   "r_modelViewProjection") \
+
+//////////////////////////////////////////////////////////////////////////
+
 namespace nimble{
-	namespace renderdevice{
-        namespace opengles_2_0{
-
+    namespace renderdevice{
+        namespace opengles_3_0{
+            
             //! lists and iterators
-            typedef std::vector<ITexture*, core::Allocator<ITexture*> >                 TextureList;
-            typedef TextureList::iterator												TextureIterator;
-            typedef std::vector<math::Matrix4x4f, core::Allocator<math::Matrix4x4f > >  MatrixList;
-            typedef MatrixList::iterator												MatrixIterator;
-            typedef std::vector<unsigned int, core::Allocator<unsigned int> >			MatrixModeStack;
-            typedef MatrixModeStack::iterator											MatrixModeIterator;
-
+            typedef std::vector<math::Matrix4x4f>   MatrixList;
+            typedef MatrixList::iterator			MatrixIterator;
+            typedef std::vector<unsigned int>		MatrixModeStack;
+            typedef MatrixModeStack::iterator		MatrixModeIterator;
+            
             //! fixed state information
             struct renderContext_t{
+                // frame buffer state
                 IFrameBuffer*                               m_pFrameBuffer;
-
+                
+                // vertex / index buffers state
                 IVertexBuffer*                              m_pVertexBuffer;
                 IIndexBuffer*                               m_pIndexBuffer;
                 
-                int                                         m_vertexAttributeEnabledMask;
-                
+                // shader program state
                 IShaderProgram*                             m_pShaderProgram;
                 IShader*                                    m_pVertexShader;
                 IShader*                                    m_pPixelShader;
                 
+                // flags for shader program matrix params
+#define SHADERPARAM_TUPLE(NAME, SHADERNAME) bool m_shaderHas##NAME##ShaderParam;
+                SHADERPARAM_TUPLESET
+#undef SHADERPARAM_TUPLE
+                
+                // viewport state
                 math::Rect2i                                m_viewport;
                 
+                // texture state
                 int                                         m_currentTextureUnitIndex;
-                TextureList                                 m_textureArray;
-
+                ITexture                                    *m_textures[renderdevice::kMaxTextureUnits];
+                
+                // flags for matrix state has changed
+#define SHADERPARAM_TUPLE(NAME, SHADERNAME) bool m_final##NAME##MatrixChanged;
+                SHADERPARAM_TUPLESET
+#undef SHADERPARAM_TUPLE
+                
+                // model matrix state
                 MatrixList                                  m_modelMatrixStack;
                 MatrixList                                  m_finalModelMatrixStack;
                 math::Matrix4x4f                            m_modelMatrix;
                 math::Matrix4x4f                            m_topModelMatrix;
                 math::Matrix4x4f                            m_finalModelMatrix;
-                bool                                        m_finalModelMatrixChanged;
-
+                math::Matrix3x3f                            m_finalNormalMatrix;
+                
+                // view matrix state
                 MatrixList                                  m_viewMatrixStack;
                 MatrixList                                  m_finalViewMatrixStack;
                 math::Matrix4x4f                            m_viewMatrix;
                 math::Matrix4x4f                            m_topViewMatrix;
                 math::Matrix4x4f                            m_finalViewMatrix;
-                bool                                        m_finalViewMatrixChanged;
-
+                math::Matrix4x4f                            m_finalInvViewMatrix;
+                
+                // projection matrix state
                 MatrixList                                  m_projectionMatrixStack;
                 MatrixList                                  m_finalProjectionMatrixStack;
                 math::Matrix4x4f                            m_projectionMatrix;
                 math::Matrix4x4f                            m_topProjectionMatrix;
                 math::Matrix4x4f                            m_finalProjectionMatrix;
-                bool                                        m_finalProjectionMatrixChanged;
-
-                math::Matrix4x4f                            m_finalMatrix;
-                MatrixModeStack                             m_matrixModeStack;
-                renderdevice::IRenderDevice::eMatrixMode    m_currentMatrixMode;
-
-                bool                                        m_renderStates[renderdevice::IRenderDevice::kMaxStates];
                 
+                // model view matrix state
+                math::Matrix4x4f                            m_finalModelViewMatrix;
+                
+                // model view projection matrix state
+                math::Matrix4x4f                            m_finalModelViewProjectionMatrix;
+                
+                // matrix mode state
+                MatrixModeStack                             m_matrixModeStack;
+                renderdevice::eRenderMatrixMode             m_currentMatrixMode;
+                
+                // render states
+                bool                                        m_renderStates[renderdevice::kMaxRenderStates];
+                
+                // delegate
                 renderdevice::IRenderDevice::Delegate*      m_pRenderDeviceDelegate;
             };
-
+            
             //! RenderDevice impl
             class RenderDevice
             : public renderdevice::IRenderDevice{
             private:
-
+                
                 renderContext_t m_context;
-
+                
             public:
-
+                
                 //! Constructor
                 RenderDevice();
                 //! Destructor
@@ -105,11 +136,11 @@ namespace nimble{
                 virtual unsigned int getFrameHeight();
                 
             public:
-
+                
                 //! draws with current state
                 virtual void draw();
                 //! draws with current state
-                virtual void draw(uint32_t startIndex, uint32_t numIndices);
+                virtual void drawElements(uint32_t startIndex, uint32_t numIndices);
                 
                 //! starts rendering a frame
                 virtual void beginFrame();
@@ -117,7 +148,7 @@ namespace nimble{
                 virtual void endFrame();
                 
             public:
-
+                
                 //! clear frame buffer
                 //! \param bufferMask the set of buffers to clear
                 virtual void clearBuffer(uint32_t bufferMask);
@@ -127,33 +158,46 @@ namespace nimble{
                 //! \param g the green component
                 //! \param b the blue component
                 //! \param a the alpha component
-                virtual void setClearColor(core::Float r, core::Float g, core::Float b, core::Float a);
-
+                virtual void setClearColor(float r, float g, float b, float a);
+                
             public:
-
+                
+                //! Fill mode functions
+                //! \param face the face to set fill mode
+                //! \param mode the fill mode
+                virtual void setFillMode(renderdevice::eRenderFace face, renderdevice::eRenderFillMode mode);
+                
                 //! Depth functions
                 //! \param func the depth compare mode
-                virtual void setDepthFunc(renderdevice::IRenderDevice::eDepthFunc func);
+                virtual void setDepthFunc(renderdevice::eRenderDepthFunc func);
                 //! Stencil functions
                 //! \param func the stencil compare mode
-                virtual void setStencilFunc(renderdevice::IRenderDevice::eStencilFunc func);
+                virtual void setStencilFunc(renderdevice::eRenderStencilFunc func, int32_t ref, uint32_t mask);
+                //! Stencil operation
+                //! \param sfail action taken when stencil pass fails
+                //! \param dfail action taken when depth pass fails
+                //! \param pass action taken when stencil and depth pass succeed
+                virtual void setStencilOp(renderdevice::eRenderStencilOp sfail, renderdevice::eRenderStencilOp dfail, renderdevice::eRenderStencilOp pass);
+                //! Stencil operation
+                //! \param mask stencil write mask
+                virtual void setStencilMask(uint32_t mask);
                 //! Cull functions
                 //! \param face the face to cull
-                virtual void setCullFace(renderdevice::IRenderDevice::eCullFace face);
+                virtual void setCullFace(renderdevice::eRenderCullFace face);
                 //! Front face orientation function
                 //! \param orientation the face orientation
-                virtual void setFrontFaceOrientation(renderdevice::IRenderDevice::eOrientation orientation);
+                virtual void setFrontFaceOrientation(renderdevice::eRenderOrientation orientation);
                 //! Blend function
                 //! \param srcScaler the src scaler component
                 //! \param destScaler the dest scaler component
-                virtual void setBlendFunc(renderdevice::IRenderDevice::eBlendScaler srcScaler, renderdevice::IRenderDevice::eBlendScaler destScaler);
+                virtual void setBlendFunc(renderdevice::eRenderBlendFactor srcScaler, renderdevice::eRenderBlendFactor destScaler);
                 
                 //! Enable function
                 //! \param enables a state
-                virtual void enableState(renderdevice::IRenderDevice::eState state);
+                virtual void enableState(renderdevice::eRenderState state);
                 //! Disable function
                 //! \param disables a state
-                virtual void disableState(renderdevice::IRenderDevice::eState state);
+                virtual void disableState(renderdevice::eRenderState state);
                 
                 //! sets viewport
                 //! \param x the viewport x coordinate
@@ -166,47 +210,52 @@ namespace nimble{
                 
                 //! sets vertex array
                 //! \param pVertexBuffer the vertex array to bind
-                virtual bool bindVertexBuffer(renderdevice::IVertexBuffer *pVertexBuffer, bool force = false);
+                virtual void bindVertexBuffer(renderdevice::IVertexBuffer *pVertexBuffer);
                 //! sets index array
                 //! \param pIndexBuffer the index array to bind
-                virtual bool bindIndexBuffer(renderdevice::IIndexBuffer *pIndexBuffer, bool force = false);
+                virtual void bindIndexBuffer(renderdevice::IIndexBuffer *pIndexBuffer);
                 //! sets light
                 //! \param textureUnit the index of the texture
                 //! \param pTexture the texture data
                 //! \return true if successful
-                virtual bool bindTexture(uint32_t textureUnit, renderdevice::ITexture *pTexture, bool force = false);
+                virtual void bindTexture(uint32_t textureUnit, renderdevice::ITexture *pTexture);
                 //! sets frame buffer
                 //! \param pFrameBuffer the frame buffer
                 //! \return true if successful
-                virtual bool bindFrameBuffer(renderdevice::IFrameBuffer *pFrameBuffer, bool force = false);
+                virtual void bindFrameBuffer(renderdevice::IFrameBuffer *pFrameBuffer);
                 //! sets a program
                 //! \param pShaderProgram the program
                 //! \return true if successful
-                virtual bool bindShaderProgram(renderdevice::IShaderProgram *pShaderProgram);
-
+                virtual void bindShaderProgram(renderdevice::IShaderProgram *pShaderProgram);
+                
             public:
-
+                
+                //! sets our projection matrix
+                virtual void setProjectionMatrix(nimble::math::Matrix4x4f const &matrix);
+                //! sets our view matrix
+                virtual void setViewMatrix(nimble::math::Matrix4x4f const &matrix);
+                
                 //! sets matrix
                 //! \param matrix the matrix data
-                virtual void setMatrix(math::Matrix4x4f& matrix);
-                //! gets matrix 
+                virtual void setMatrix(math::Matrix4x4f const &matrix);
+                //! gets matrix
                 //! \param matrixMode the matrix mode we are interested in
                 //! \return the matrix associated with the matrix mode
-                virtual math::Matrix4x4f getMatrix(eMatrixMode matrixMode);
-
+                virtual math::Matrix4x4f getMatrix(eRenderMatrixMode matrixMode) const;
+                
                 //! push matrix onto the matrix stack
                 virtual void pushMatrix();
                 //! pop matrix onto the matrix stack
                 virtual void popMatrix();
                 //! clears all matrices including stack
                 virtual void clearMatrix();
-
+                
                 //! sets matrix mode
                 //! \param mode the matrix mode to set
-                virtual void setMatrixMode(renderdevice::IRenderDevice::eMatrixMode mode);
+                virtual void setMatrixMode(renderdevice::eRenderMatrixMode mode);
                 //! gets matrix mode
                 //! \return the matrix mode
-                virtual renderdevice::IRenderDevice::eMatrixMode getMatrixMode();
+                virtual renderdevice::eRenderMatrixMode getMatrixMode() const;
                 //! pushes matrix mode
                 virtual void pushMatrixMode();
                 //! pops matrix mode
@@ -217,7 +266,7 @@ namespace nimble{
                 //! creates a frame buffer
                 //! \param descriptor the frame buffer's descriptor
                 //! \return a frame buffer
-                virtual renderdevice::IFrameBuffer* createFrameBuffer(uint32_t width, uint32_t height);
+                virtual renderdevice::IFrameBuffer* createFrameBuffer(uint32_t width, uint32_t height, uint32_t flags = 0);
                 
                 //! creates a vertex array
                 //! \param format the vertex format
@@ -233,8 +282,8 @@ namespace nimble{
                 //! \param numindices the number of indices in this buffer
                 //! \param usage the usage hints for this buffer
                 //! \return a index array
-                virtual renderdevice::IIndexBuffer* createIndexBuffer(renderdevice::IIndexBuffer::ePrimitiveType primitiveType,
-                                                                      renderdevice::IIndexBuffer::eIndexType indexType,
+                virtual renderdevice::IIndexBuffer* createIndexBuffer(renderdevice::ePrimitiveType primitiveType,
+                                                                      renderdevice::eIndexType indexType,
                                                                       uint32_t numIndices,
                                                                       uint32_t usage);
                 //! creates a texture
@@ -245,40 +294,34 @@ namespace nimble{
                 //! \return a texture
                 virtual renderdevice::ITexture* createTexture(uint32_t width,
                                                               uint32_t height,
-                                                              renderdevice::ITexture::eFormat format,
+                                                              renderdevice::eTextureFormat format,
                                                               uint32_t usage);
-                
+                //! creates a texture from an image
+                //! \param image the image to create from
+                //! \param format the format of the texture
+                //! \param usage the usage hints for this texture
+                //! \return a texture
+                virtual renderdevice::ITexture* createTextureFromImage(image::Image &image,
+                                                                       uint32_t usage);
                 //! creates a shader
                 //! \param type the shader type
                 //! \return a shader
-                virtual renderdevice::IShader* createShader(renderdevice::IShader::eType type);
+                virtual renderdevice::IShader* createShader(renderdevice::eShaderType type);
                 //! creates a shader program
                 //! \return a shader program
                 virtual renderdevice::IShaderProgram* createShaderProgram();
-                //! creates shader params
-                //! \return shader params
-                virtual renderdevice::IShaderParams* createShaderParams();
-
+                
             private:
                 
-                //! sets the render state depth func
-                virtual void setGLRenderStateDepthFunc(renderdevice::IRenderDevice::eDepthFunc func);
-                //! sets the render state stencil func
-                virtual void setGLRenderStateStencilFunc(renderdevice::IRenderDevice::eStencilFunc func);
-                //! sets the render state cull face
-                virtual void setGLRenderStateCullFace(renderdevice::IRenderDevice::eCullFace face);
-                //! sets the render state blend func
-                virtual void setGLRenderStateBlendFunc(renderdevice::IRenderDevice::eBlendScaler srcScaler, renderdevice::IRenderDevice::eBlendScaler destScaler);
-                //! sets the render state front face orientation
-                virtual void setGLRenderStateFrontFaceOrientation(renderdevice::IRenderDevice::eOrientation orientation);
+                //! Sets our shader program matrix states
+                virtual void patchShaderProgramMatrixParams();
                 
-                //! sets our transformation matrix
-                virtual void setGLMatrix(renderdevice::IRenderDevice::eMatrixMode matrixMode);
-                //! sets the render state matrix mode
-                virtual void setGLRenderStateMatrixMode(renderdevice::IRenderDevice::eMatrixMode matrixMode);
-                
+                //! sets the render state color write
+                virtual void setGLRenderStateColorWrite(bool enabled);
                 //! sets the render state depth write
                 virtual void setGLRenderStateDepthWrite(bool enabled);
+                //! sets the render state stencil write
+                virtual void setGLRenderStateStencilWrite(bool enabled);
                 //! sets the render state depth test mode
                 virtual void setGLRenderStateDepthTest(bool enabled);
                 //! sets the render state stencil test
@@ -298,7 +341,7 @@ namespace nimble{
                 virtual void resetRenderContext();
             };
         };
-	};
+    };
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -5,12 +5,12 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_shader__
-#define __nimble_renderdevice_opengles_2_0_shader__
+#ifndef __nimble_renderdevice_opengles_3_0_shader__
+#define __nimble_renderdevice_opengles_3_0_shader__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/common.h>
+#include <nimble/renderdevice/opengles_3_0/common.h>
 #include <nimble/renderdevice/ishader.h>
 #include <nimble/resource/resource.h>
 
@@ -18,7 +18,7 @@
 
 namespace nimble{
 	namespace renderdevice{
-        namespace opengles_2_0{
+        namespace opengles_3_0{
             class RenderDevice;
             class ShaderProgram;
             
@@ -26,7 +26,7 @@ namespace nimble{
             class Shader
             : public renderdevice::IShader
             , public resource::Resource{
-                friend class nimble::renderdevice::opengles_2_0::RenderDevice;
+                friend class nimble::renderdevice::opengles_3_0::RenderDevice;
             private:
                 
                 GLuint                      m_shaderHandle;

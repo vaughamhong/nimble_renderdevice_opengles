@@ -8,6 +8,7 @@ valgrind/
 
 projects/vs2012_win32/
 projects/xcode_osx/
+projects/xcode_ios/
 projects/android/libs/
 
 

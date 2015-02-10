@@ -5,18 +5,18 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice/opengles_2_0/indexbuffer.h>
-#include <nimble/renderdevice/opengles_2_0/mappings.h>
+#include <nimble/renderdevice/opengles_3_0/indexbuffer.h>
+#include <nimble/renderdevice/opengles_3_0/mappings.h>
 
 //////////////////////////////////////////////////////////////////////////
 
 using namespace nimble;
-using namespace nimble::renderdevice::opengles_2_0;
+using namespace nimble::renderdevice::opengles_3_0;
 
 //////////////////////////////////////////////////////////////////////////
 
 //! a constructor
-IndexBuffer::IndexBuffer(renderdevice::IIndexBuffer::ePrimitiveType primitiveType, renderdevice::IIndexBuffer::eIndexType indexType, uint32_t numIndices, uint32_t usage)
+IndexBuffer::IndexBuffer(renderdevice::ePrimitiveType primitiveType, renderdevice::eIndexType indexType, uint32_t numIndices, uint32_t usage)
 :m_arrayBuffer(numIndices, gIndexIndexTypeSizeMap[indexType], usage, GL_ARRAY_BUFFER)
 ,m_primitiveType(primitiveType)
 ,m_indexType(indexType){
@@ -47,43 +47,44 @@ uint32_t IndexBuffer::getUsage() const{
 }
 //! returns the number of bytes for a single index
 //! \return the number of bytes for a single index
-core::Int32 IndexBuffer::getIndexSize() const{
+size_t IndexBuffer::getIndexSize() const{
     return gIndexIndexTypeSizeMap[m_indexType];
 }
 //! returns the primitive type of this index array
 //! \return value of type enum ePrimitiveType
-renderdevice::IIndexBuffer::eIndexType IndexBuffer::getIndexType() const{
+renderdevice::eIndexType IndexBuffer::getIndexType() const{
     return m_indexType;
 }
 //! returns the primitive type of this index array
 //! \return value of type enum ePrimitiveType
-renderdevice::IIndexBuffer::ePrimitiveType IndexBuffer::getPrimitiveType() const{
+renderdevice::ePrimitiveType IndexBuffer::getPrimitiveType() const{
     return m_primitiveType;
 }
 //! returns the number of indices
 //! \return the number of indices
-uint32_t IndexBuffer::getNumIndices() const{
+size_t IndexBuffer::getNumIndices() const{
     return m_arrayBuffer.getNumElements();
 }
 //! returns the number of bytes in this array
 //! \return the number of bytes in this array
-uint32_t IndexBuffer::getBufferSize() const{
+size_t IndexBuffer::getBufferSize() const{
     return m_arrayBuffer.getBufferSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 //! attempts to map array buffer
-char* IndexBuffer::mapBuffer(eLockType lockType){
+char* IndexBuffer::mapBuffer(core::eLockType lockType){
     return m_arrayBuffer.mapBuffer(lockType);
 }
 //! attempts to map array buffer
-char* IndexBuffer::mapBufferRange(eLockType lockType, uint32_t offset, uint32_t size){
+char* IndexBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uint32_t size){
     return m_arrayBuffer.mapBufferRange(lockType, offset, size);
 }
 //! attempts to unmap array buffer
 void IndexBuffer::unmapBuffer(){
     return m_arrayBuffer.unmapBuffer();
 }
+
 
 //////////////////////////////////////////////////////////////////////////

@@ -5,14 +5,13 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice/opengles_2_0/vertexbuffer.h>
-#include <nimble/renderdevice/opengles_2_0/mappings.h>
-#include <nimble/core/debug.h>
+#include <nimble/renderdevice/opengles_3_0/vertexbuffer.h>
+#include <nimble/renderdevice/opengles_3_0/mappings.h>
 
 //////////////////////////////////////////////////////////////////////////
 
 using namespace nimble;
-using namespace nimble::renderdevice::opengles_2_0;
+using namespace nimble::renderdevice::opengles_3_0;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -53,33 +52,34 @@ const renderdevice::VertexFormat& VertexBuffer::getVertexFormat() const{
     return m_vertexFormat;
 }
 //! returns the vertex stride
-uint32_t VertexBuffer::getVertexStride() const{
+size_t VertexBuffer::getVertexStride() const{
     return m_vertexFormat.getVertexStride();
 }
 //! returns the number of vertices
 //! \return the number of vertices
-uint32_t VertexBuffer::getNumVertices() const{
+size_t VertexBuffer::getNumVertices() const{
     return m_arrayBuffer.getNumElements();
 }
 //! returns the number of bytes in this array
 //! \return the number of bytes in this array
-uint32_t VertexBuffer::getBufferSize() const{
+size_t VertexBuffer::getBufferSize() const{
     return m_arrayBuffer.getBufferSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 //! attempts to map array buffer
-char* VertexBuffer::mapBuffer(eLockType lockType){
+char* VertexBuffer::mapBuffer(core::eLockType lockType){
     return m_arrayBuffer.mapBuffer(lockType);
 }
 //! attempts to map array buffer
-char* VertexBuffer::mapBufferRange(eLockType lockType, uint32_t offset, uint32_t size){
+char* VertexBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uint32_t size){
     return m_arrayBuffer.mapBufferRange(lockType, offset, size);
 }
 //! attempts to unmap array buffer
 void VertexBuffer::unmapBuffer(){
     return m_arrayBuffer.unmapBuffer();
 }
+
 
 //////////////////////////////////////////////////////////////////////////

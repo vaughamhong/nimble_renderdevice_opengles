@@ -5,11 +5,11 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice-opengles_2_0/renderdevice.h>
-#include <nimble/renderdevice-opengles_2_0/texture.h>
-#include <nimble/renderdevice-opengles_2_0/vertexbuffer.h>
-#include <nimble/renderdevice-opengles_2_0/indexbuffer.h>
-#include <nimble/renderdevice-opengles_2_0/framebuffer.h>
+#include <nimble/renderdevice/opengles_2_0/renderdevice.h>
+#include <nimble/renderdevice/opengles_2_0/texture.h>
+#include <nimble/renderdevice/opengles_2_0/vertexbuffer.h>
+#include <nimble/renderdevice/opengles_2_0/indexbuffer.h>
+#include <nimble/renderdevice/opengles_2_0/framebuffer.h>
 #include <memory>
 
 //////////////////////////////////////////////////////////////////////////

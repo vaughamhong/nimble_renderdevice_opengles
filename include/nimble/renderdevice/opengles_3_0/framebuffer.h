@@ -5,12 +5,12 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_framebuffer_h__
-#define __nimble_renderdevice_opengles_2_0_framebuffer_h__
+#ifndef __nimble_renderdevice_opengles_3_0_framebuffer_h__
+#define __nimble_renderdevice_opengles_3_0_framebuffer_h__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/common.h>
+#include <nimble/renderdevice/opengles_3_0/common.h>
 #include <nimble/renderdevice/iframebuffer.h>
 #include <nimble/resource/resource.h>
 
@@ -18,7 +18,7 @@
 
 namespace nimble{
 	namespace renderdevice{
-        namespace opengles_2_0{
+        namespace opengles_3_0{
 
             //! Frame buffer impl
             class FrameBuffer

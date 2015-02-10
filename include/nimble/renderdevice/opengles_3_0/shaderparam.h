@@ -5,23 +5,21 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_shaderprogram__
-#define __nimble_renderdevice_opengles_2_0_shaderprogram__
+#ifndef __nimble_renderdevice_opengles_3_0_shaderparam_h__
+#define __nimble_renderdevice_opengles_3_0_shaderparam_h__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/common.h>
-#include <nimble/renderdevice/ishaderprogram.h>
-#include <nimble/resource/resource.h>
+#include <nimble/renderdevice/opengles_3_0/common.h>
+#include <nimble/renderdevice/shaderparam.h>
+#include <string>
 
 //////////////////////////////////////////////////////////////////////////
 
 namespace nimble{
 	namespace renderdevice{
-        namespace opengles_2_0{
-            class RenderDevice;
-            class Shader;
-            
+        namespace opengles_3_0{
+
             //! shader parameter
             class ShaderParam
             : public renderdevice::ShaderParam{
@@ -37,7 +35,7 @@ namespace nimble{
                 //! Constructor
                 ShaderParam(const char *name, renderdevice::eShaderParamType type, void *pData, GLint handle, GLint textureUnit = -1);
                 //! Constructor
-                ShaderParam(renderdevice::opengl::ShaderParam const &param);
+                ShaderParam(renderdevice::opengles_3_0::ShaderParam const &param);
                 //! Destructor
                 virtual ~ShaderParam();
                 

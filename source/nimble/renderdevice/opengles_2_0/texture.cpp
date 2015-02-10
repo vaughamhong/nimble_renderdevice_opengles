@@ -5,8 +5,8 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice-opengles_2_0/texture.h>
-#include <nimble/renderdevice-opengles_2_0/mappings.h>
+#include <nimble/renderdevice/opengles_2_0/texture.h>
+#include <nimble/renderdevice/opengles_2_0/mappings.h>
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +16,12 @@ using namespace nimble::renderdevice::opengles_2_0;
 //////////////////////////////////////////////////////////////////////////
 
 //! Constructor
-Texture::Texture(core::UInt32 size, renderdevice::ITexture::eFormat textureFormat, core::UInt32 usage){
+Texture::Texture(uint32_t size, renderdevice::ITexture::eFormat textureFormat, uint32_t usage){
     // note: OpenGLES 1.1 only supports 2D textures
     core::assert_error(m_dimension == renderdevice::ITexture::kDimention2D);
 }
 //! Constructor
-Texture::Texture(core::UInt32 width, core::UInt32 height, renderdevice::ITexture::eFormat textureFormat, core::UInt32 usage)
+Texture::Texture(uint32_t width, uint32_t height, renderdevice::ITexture::eFormat textureFormat, uint32_t usage)
 :m_textureHandle(0)
 ,m_pboHandle(0)
 ,m_usage(usage)
@@ -40,7 +40,7 @@ Texture::Texture(core::UInt32 width, core::UInt32 height, renderdevice::ITexture
 	createBuffers();
 }
 //! Constructor
-Texture::Texture(core::UInt32 width, core::UInt32 height, core::UInt32 depth, renderdevice::ITexture::eFormat textureFormat, core::UInt32 usage){
+Texture::Texture(uint32_t width, uint32_t height, uint32_t depth, renderdevice::ITexture::eFormat textureFormat, uint32_t usage){
     //! note: OpenGLES 1.1 only supports 2D textures
     core::assert_error(m_dimension == renderdevice::ITexture::kDimention2D);
 }
@@ -68,17 +68,17 @@ Texture::Texture(Texture& texture)
     // copy our source data to our destination
     char* pSrPointer = 0;
     char* pDestPointer = 0;
-    if(texture.lock(core::ILockable::kTypeRead, (char**)&pSrPointer)){
-        if(this->lock(core::ILockable::kTypeWrite, (char**)&pDestPointer)){
+    if(texture.lock(core::kLockTypeRead, (char**)&pSrPointer)){
+        if(this->lock(core::kLockTypeWrite, (char**)&pDestPointer)){
             memcpy(pDestPointer, pSrPointer, getBufferSize());
             this->unlock();
             texture.unlock();
         }else{
-            core::logError("graphics", "Failed to lock destination texture buffer");
+            core::logger_error("graphics", "Failed to lock destination texture buffer");
             texture.unlock();
         }
     }else{
-        core::logError("graphics", "Failed to lock source texture buffer");
+        core::logger_error("graphics", "Failed to lock source texture buffer");
     }
 }
 //! Destructor
@@ -97,9 +97,9 @@ void Texture::createBuffers(){
     core::assert_error(m_dimension != renderdevice::ITexture::kUnknownDimension);
     core::assert_error(m_textureFormat != renderdevice::ITexture::kUnknownFormat);
 
-    core::UInt32 width = m_dimensionValues[0];
-    core::UInt32 height = m_dimensionValues[1];
-    core::UInt32 bufferSize = getBufferSize();
+    uint32_t width = m_dimensionValues[0];
+    uint32_t height = m_dimensionValues[1];
+    uint32_t bufferSize = getBufferSize();
     core::assert_error(bufferSize > 0);
 
     // create a local buffer
@@ -113,14 +113,14 @@ void Texture::createBuffers(){
 	// generate a pixel buffer object handle
     // note: OpenGLES 1.1 only supports 2D textures
 	glGenBuffers(1, &m_pboHandle);
-    core::UInt32 dimension  = gTextureDimensionMap[m_dimension];
-	core::UInt32 format = gTextureFormatMap[m_textureFormat];
-	core::UInt32 internalFormat = gTextureInternalFormatMap[m_textureFormat];
-	core::UInt32 type = gTextureTypeMap[m_textureFormat];
-    core::UInt32 filterModeMag = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMag)];
-	core::UInt32 filterModeMin = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMin)];
-	core::UInt32 wrapModeU = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamU)];
-	core::UInt32 wrapModeV = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamV)];
+    uint32_t dimension  = gTextureDimensionMap[m_dimension];
+	uint32_t format = gTextureFormatMap[m_textureFormat];
+	uint32_t internalFormat = gTextureInternalFormatMap[m_textureFormat];
+	uint32_t type = gTextureTypeMap[m_textureFormat];
+    uint32_t filterModeMag = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMag)];
+	uint32_t filterModeMin = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMin)];
+	uint32_t wrapModeU = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamU)];
+	uint32_t wrapModeV = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamV)];
 	GLuint handle = this->getTextureHandle();
     
     // track previously bound
@@ -175,7 +175,7 @@ void Texture::destroyBuffers(){
 
 //! returns the usage
 //! \return the usage
-core::UInt32 Texture::getUsage() const{
+uint32_t Texture::getUsage() const{
     return m_usage;
 }
 //! gets the format of this texture
@@ -187,24 +187,24 @@ renderdevice::ITexture::eDimension Texture::getDimension() const{
     return m_dimension;
 }
 //! gets the width of the texture
-core::UInt32 Texture::getWidth() const{
+uint32_t Texture::getWidth() const{
     return m_dimensionValues[0];
 }
 //! gets the height of the texture
-core::UInt32 Texture::getHeight() const{
+uint32_t Texture::getHeight() const{
     return m_dimensionValues[1];
 }
 //! gets the depth of the texture
-core::UInt32 Texture::getDepth() const{
+uint32_t Texture::getDepth() const{
     return m_dimensionValues[2];
 }
 //! gets the bytes per pixel
-core::UInt32 Texture::getBytesPerPixel() const{
+uint32_t Texture::getBytesPerPixel() const{
     core::assert_error(m_textureFormat != renderdevice::ITexture::kUnknownFormat);
     return gTexturePixelSizeMap[m_textureFormat];
 }
 //! gets the texture size in bytes
-core::UInt32 Texture::getBufferSize() const{
+uint32_t Texture::getBufferSize() const{
     core::assert_error(m_dimensionValues[0] > 0);
     core::assert_error(m_dimensionValues[1] > 0);
     return m_dimensionValues[0] * m_dimensionValues[1] * getBytesPerPixel();
@@ -241,12 +241,12 @@ GLuint Texture::getTextureHandle() const{
 //////////////////////////////////////////////////////////////////////////
 
 //! attempts to map a buffer
-core::Int8* Texture::mapBuffer(eLockType lockType){
+char* Texture::mapBuffer(eLockType lockType){
     core::assert_error(!isLocked());
     return this->mapBufferRange(lockType, 0, this->getBufferSize());
 }
 //! attempts to map a buffer
-core::Int8* Texture::mapBufferRange(eLockType lockType, core::UInt32 offset, core::UInt32 size){
+char* Texture::mapBufferRange(eLockType lockType, uint32_t offset, uint32_t size){
     core::assert_error(!isLocked());
     core::assert_error(offset < this->getBufferSize());
     core::assert_error((offset + size) <= this->getBufferSize());
@@ -261,16 +261,16 @@ core::Int8* Texture::mapBufferRange(eLockType lockType, core::UInt32 offset, cor
 void Texture::unmapBuffer(){
     if(m_usage & renderdevice::ITexture::kUsageLocalBuffer){
         if(char *pData = m_localBuffer.getPointer()){
-            core::UInt32 width = this->getWidth();
-            core::UInt32 height= this->getHeight();
-            core::UInt32 dimension  = gTextureDimensionMap[this->getDimension()];
-            core::UInt32 format = gTextureFormatMap[this->getFormat()];
-            core::UInt32 internalFormat = gTextureInternalFormatMap[this->getFormat()];
-            core::UInt32 type = gTextureTypeMap[this->getFormat()];
-            core::UInt32 filterModeMag = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMag)];
-            core::UInt32 filterModeMin = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMin)];
-            core::UInt32 wrapModeU = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamU)];
-            core::UInt32 wrapModeV = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamV)];
+            uint32_t width = this->getWidth();
+            uint32_t height= this->getHeight();
+            uint32_t dimension  = gTextureDimensionMap[this->getDimension()];
+            uint32_t format = gTextureFormatMap[this->getFormat()];
+            uint32_t internalFormat = gTextureInternalFormatMap[this->getFormat()];
+            uint32_t type = gTextureTypeMap[this->getFormat()];
+            uint32_t filterModeMag = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMag)];
+            uint32_t filterModeMin = gTextureFilterModeValueMap[this->getFilterMode(renderdevice::ITexture::kFilterParamMin)];
+            uint32_t wrapModeU = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamU)];
+            uint32_t wrapModeV = gTextureWrapModeValueMap[this->getWrapMode(renderdevice::ITexture::kWrapParamV)];
             GLuint handle = this->getTextureHandle();
             
             // track previously bound

@@ -5,8 +5,8 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice-opengles_2_0/shaderprogram.h>
-#include <nimble/renderdevice-opengles_2_0/shader.h>
+#include <nimble/renderdevice/opengles_2_0/shaderprogram.h>
+#include <nimble/renderdevice/opengles_2_0/shader.h>
 #include <nimble/core/debug.h>
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,11 +58,11 @@ void ShaderProgram::compile(renderdevice::IShader *pVertexShader, renderdevice::
     m_pVertexShader = dynamic_cast<renderdevice::opengles_2_0::Shader*>(pVertexShader);
     m_pPixelShader = dynamic_cast<renderdevice::opengles_2_0::Shader*>(pPixelShader);
     if(!m_pVertexShader || (m_pVertexShader->getShaderType() != renderdevice::IShader::kTypeVertex)){
-        core::logError("graphics", "Program compiling with an invalid vertex shader");
+        core::logger_error("graphics", "Program compiling with an invalid vertex shader");
         return;
     }
     if(!m_pPixelShader || (m_pPixelShader->getShaderType() != renderdevice::IShader::kTypePixel)){
-        core::logError("graphics", "Program compiling with an invalid pixel shader");
+        core::logger_error("graphics", "Program compiling with an invalid pixel shader");
         return;
     }
     
@@ -81,9 +81,9 @@ void ShaderProgram::compile(renderdevice::IShader *pVertexShader, renderdevice::
             char logbuffer[maxLogLength];
             GLint loglen = 0;
             glGetProgramInfoLog(m_programHandle, (GLsizei)sizeof(logbuffer), &loglen, logbuffer);
-            core::logError("graphics", "Shader program compile log:\n%.*s", loglen, logbuffer);
+            core::logger_error("graphics", "Shader program compile log:\n%.*s", loglen, logbuffer);
         }else{
-            core::logError("graphics", "Shader program compile general failure...");
+            core::logger_error("graphics", "Shader program compile general failure...");
         }
     }
 }

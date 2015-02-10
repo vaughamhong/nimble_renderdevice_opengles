@@ -5,32 +5,32 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice/opengles_2_0/shader.h>
-#include <nimble/core/debug.h>
+#include <nimble/renderdevice/opengles_3_0/shader.h>
+#include <nimble/core/assert.h>
 
 //////////////////////////////////////////////////////////////////////////
 
 using namespace nimble;
-using namespace nimble::renderdevice::opengles_2_0;
+using namespace nimble::renderdevice::opengles_3_0;
 
 //////////////////////////////////////////////////////////////////////////
 
 //! Constructor
-Shader::Shader(renderdevice::IShader::eType type)
+Shader::Shader(renderdevice::eShaderType type)
 :m_shaderHandle(0)
 ,m_type(type){
 }
 //! Destructor
 Shader::~Shader(){
     if(m_shaderHandle){
-        glDeleteShader(m_shaderHandle);
+        GLDEBUG(glDeleteShader(m_shaderHandle));
     }
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 //! Get shader type
-renderdevice::IShader::eType Shader::getShaderType() const{
+renderdevice::eShaderType Shader::getShaderType() const{
     return m_type;
 }
 
@@ -41,33 +41,33 @@ renderdevice::IShader::eType Shader::getShaderType() const{
 bool Shader::compileWithSource(const char *pData){
     const char *sharedNimbleShaderSource = "\
     const int NIMBLE_NUMLIGHTS = 4; \n\
-    const int NIMBLE_NUMTEXTURES = 4; \n\
-    #define NIMBLE_GLES \n";
+    const int NIMBLE_NUMTEXTURES = 4; \n";
     std::string completeSource = std::string(sharedNimbleShaderSource) + std::string(pData);
     const GLchar *source = (const GLchar*)completeSource.c_str();
     
     // create / compile our shader source
-    if(getShaderType() == renderdevice::IShader::kTypePixel){
-        m_shaderHandle = glCreateShader(GL_FRAGMENT_SHADER);
-    }else if(getShaderType() == renderdevice::IShader::kTypeVertex){
-        m_shaderHandle = glCreateShader(GL_VERTEX_SHADER);
+    if(getShaderType() == renderdevice::kShaderTypePixel){
+        m_shaderHandle = GLDEBUG(glCreateShader(GL_FRAGMENT_SHADER));
+    }else if(getShaderType() == renderdevice::kShaderTypeVertex){
+        m_shaderHandle = GLDEBUG(glCreateShader(GL_VERTEX_SHADER));
     }else{
         core::logger_error("graphics", "Invalid shader type detected");
     }
-    glShaderSource(m_shaderHandle, 1, &source, NULL);
-    glCompileShader(m_shaderHandle);
+    GLDEBUG(glShaderSource(m_shaderHandle, 1, &source, 0));
+    GLDEBUG(glCompileShader(m_shaderHandle));
     
     // check for errors
     GLint status;
-    glGetShaderiv(m_shaderHandle, GL_COMPILE_STATUS, &status);
+    GLDEBUG(glGetShaderiv(m_shaderHandle, GL_COMPILE_STATUS, &status));
     if(status == GL_FALSE){
         GLint maxLogLength = 0;
-        glGetShaderiv(m_shaderHandle, GL_INFO_LOG_LENGTH, &maxLogLength);
+        GLDEBUG(glGetShaderiv(m_shaderHandle, GL_INFO_LOG_LENGTH, &maxLogLength));
         if(maxLogLength > 0){
-            char logbuffer[maxLogLength];
+            char *pLogBuffer = (char*)malloc(maxLogLength);
             GLint loglen = 0;
-            glGetShaderInfoLog(m_shaderHandle, (GLsizei)sizeof(logbuffer), &loglen, logbuffer);
-            core::logWarning("graphics", "Shader compile log:\n%.*s", loglen, logbuffer);
+            GLDEBUG(glGetShaderInfoLog(m_shaderHandle, (GLsizei)maxLogLength, &loglen, pLogBuffer));
+            core::logger_warning("graphics", "Shader compile log:\n%.*s", loglen, pLogBuffer);
+            free(pLogBuffer);
         }
     }
     return true;

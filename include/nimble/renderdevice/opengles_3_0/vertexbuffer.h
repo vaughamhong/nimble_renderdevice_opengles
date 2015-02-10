@@ -5,12 +5,12 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_vertexbuffer_h__
-#define __nimble_renderdevice_opengles_2_0_vertexbuffer_h__
+#ifndef __nimble_renderdevice_opengles_3_0_vertexbuffer_h__
+#define __nimble_renderdevice_opengles_3_0_vertexbuffer_h__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/arraybuffer.h>
+#include <nimble/renderdevice/opengles_3_0/arraybuffer.h>
 #include <nimble/renderdevice/ivertexbuffer.h>
 #include <nimble/core/ilockable.h>
 #include <nimble/resource/resource.h>
@@ -19,7 +19,7 @@
 
 namespace nimble{
 	namespace renderdevice{
-        namespace opengles_2_0{
+        namespace opengles_3_0{
             class RenderDevice;
                         
             //! Vertex array impl
@@ -27,10 +27,10 @@ namespace nimble{
             : public renderdevice::IVertexBuffer
             , public core::Lockable
             , public resource::Resource{
-                friend class nimble::renderdevice::opengles_2_0::RenderDevice;
+                friend class nimble::renderdevice::opengles_3_0::RenderDevice;
             private:
                 
-                renderdevice::opengles_2_0::ArrayBuffer m_arrayBuffer;
+                renderdevice::opengles_3_0::ArrayBuffer m_arrayBuffer;
                 renderdevice::VertexFormat              m_vertexFormat;
                 
             public:

@@ -10,7 +10,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice-opengles_2_0/arraybuffer.h>
+#include <nimble/renderdevice/opengles_2_0/arraybuffer.h>
 #include <nimble/renderdevice/iindexbuffer.h>
 #include <nimble/core/ilockable.h>
 #include <nimble/resource/resource.h>
@@ -27,17 +27,17 @@ namespace nimble{
             : public renderdevice::IIndexBuffer
             , public core::Lockable
             , public resource::Resource{
-            friend class nimble::renderdevice::opengles_2_0::RenderDevice;
+                friend class nimble::renderdevice::opengles_2_0::RenderDevice;
             private:
                 
-                renderdevice::opengles_2_0::ArrayBuffer     m_arrayBuffer;
-                renderdevice::IIndexBuffer::ePrimitiveType  m_primitiveType;
-                renderdevice::IIndexBuffer::eIndexType      m_indexType;
+                renderdevice::opengles_2_0::ArrayBuffer m_arrayBuffer;
+                renderdevice::ePrimitiveType            m_primitiveType;
+                renderdevice::eIndexType                m_indexType;
                 
             public:
-
+                
                 //! a constructor
-                IndexBuffer(renderdevice::IIndexBuffer::ePrimitiveType primitiveType, renderdevice::IIndexBuffer::eIndexType indexType, core::UInt32 numIndices, core::UInt32 usage);
+                IndexBuffer(renderdevice::ePrimitiveType primitiveType, renderdevice::eIndexType indexType, uint32_t numIndices, uint32_t usage);
                 //! a copy constructor
                 IndexBuffer(IndexBuffer& IndexBuffer);
                 //! a destructor
@@ -47,15 +47,15 @@ namespace nimble{
                 
                 //! returns the internal array buffer handle
                 virtual GLuint getArrayBufferHandle() const;
-
+                
             public:
-
+                
                 //! returns the usage of this array
                 //! \return the usage of this array
-                virtual core::UInt32 getUsage() const;
+                virtual uint32_t getUsage() const;
                 //! returns the number of bytes for a single index
                 //! \return the number of bytes for a single index
-                virtual core::Int32 getIndexSize() const;
+                virtual size_t getIndexSize() const;
                 //! returns the primitive type of this index array
                 //! \return value of type enum ePrimitiveType
                 virtual eIndexType getIndexType() const;
@@ -64,17 +64,17 @@ namespace nimble{
                 virtual ePrimitiveType getPrimitiveType() const;
                 //! returns the number of indices
                 //! \return the number of indices
-                virtual core::UInt32 getNumIndices() const;
+                virtual size_t getNumIndices() const;
                 //! returns the number of bytes in this array
                 //! \return the number of bytes in this array
-                virtual core::UInt32 getBufferSize() const;
+                virtual size_t getBufferSize() const;
                 
             protected:
                 
                 //! attempts to map array buffer
-                virtual core::Int8* mapBuffer(eLockType lockType);
+                virtual char* mapBuffer(core::eLockType lockType);
                 //! attempts to map array buffer
-                virtual core::Int8* mapBufferRange(eLockType lockType, core::UInt32 offset, core::UInt32 size);
+                virtual char* mapBufferRange(core::eLockType lockType, uint32_t offset, uint32_t size);
                 //! attempts to unmap array buffer
                 virtual void unmapBuffer();
             };

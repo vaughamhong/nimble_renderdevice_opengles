@@ -5,13 +5,13 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_vertexbuffer_h__
-#define __nimble_renderdevice_opengles_2_0_vertexbuffer_h__
+#ifndef __nimble_renderdevice_opengles_3_0_indexbuffer_h__
+#define __nimble_renderdevice_opengles_3_0_indexbuffer_h__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/arraybuffer.h>
-#include <nimble/renderdevice/ivertexbuffer.h>
+#include <nimble/renderdevice/opengles_3_0/arraybuffer.h>
+#include <nimble/renderdevice/iindexbuffer.h>
 #include <nimble/core/ilockable.h>
 #include <nimble/resource/resource.h>
 
@@ -19,32 +19,29 @@
 
 namespace nimble{
 	namespace renderdevice{
-        namespace opengles_2_0{
+        namespace opengles_3_0{
             class RenderDevice;
-                        
-            //! Vertex array impl
-            class VertexBuffer
-            : public renderdevice::IVertexBuffer
+            
+            //! Index array impl
+            class IndexBuffer
+            : public renderdevice::IIndexBuffer
             , public core::Lockable
             , public resource::Resource{
-                friend class nimble::renderdevice::opengles_2_0::RenderDevice;
+                friend class nimble::renderdevice::opengles_3_0::RenderDevice;
             private:
                 
-                renderdevice::opengles_2_0::ArrayBuffer m_arrayBuffer;
-                renderdevice::VertexFormat              m_vertexFormat;
+                renderdevice::opengles_3_0::ArrayBuffer m_arrayBuffer;
+                renderdevice::ePrimitiveType            m_primitiveType;
+                renderdevice::eIndexType                m_indexType;
                 
             public:
                 
                 //! a constructor
-                //! \param format the vertex format
-                //! \param numVertices the number of vertices in this buffer
-                //! \param usage the usage hints for this buffer
-                VertexBuffer(renderdevice::VertexFormat const &vertexFormat, uint32_t numVertices, uint32_t usage);
+                IndexBuffer(renderdevice::ePrimitiveType primitiveType, renderdevice::eIndexType indexType, uint32_t numIndices, uint32_t usage);
                 //! a copy constructor
-                //! \param vertexBuffer the vertexBuffer to copy
-                VertexBuffer(VertexBuffer& vertexBuffer);
+                IndexBuffer(IndexBuffer& IndexBuffer);
                 //! a destructor
-                virtual ~VertexBuffer();
+                virtual ~IndexBuffer();
                 
             public:
                 
@@ -56,13 +53,18 @@ namespace nimble{
                 //! returns the usage of this array
                 //! \return the usage of this array
                 virtual uint32_t getUsage() const;
-                //! returns the vertex format
-                virtual const renderdevice::VertexFormat& getVertexFormat() const;
-                //! returns the vertex stride
-                virtual size_t getVertexStride() const;
-                //! returns the number of vertices
-                //! \return the number of vertices
-                virtual size_t getNumVertices() const;
+                //! returns the number of bytes for a single index
+                //! \return the number of bytes for a single index
+                virtual size_t getIndexSize() const;
+                //! returns the primitive type of this index array
+                //! \return value of type enum ePrimitiveType
+                virtual eIndexType getIndexType() const;
+                //! returns the primitive type of this index array
+                //! \return value of type enum ePrimitiveType
+                virtual ePrimitiveType getPrimitiveType() const;
+                //! returns the number of indices
+                //! \return the number of indices
+                virtual size_t getNumIndices() const;
                 //! returns the number of bytes in this array
                 //! \return the number of bytes in this array
                 virtual size_t getBufferSize() const;

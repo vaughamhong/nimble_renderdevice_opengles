@@ -5,7 +5,7 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice-opengles_2_0/renderdevice.h>
+#include <nimble/renderdevice/opengles_2_0/renderdevice.h>
 
 //////////////////////////////////////////////////////////////////////////
 

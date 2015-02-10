@@ -5,13 +5,13 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice/opengles_2_0/arraybuffer.h>
+#include <nimble/renderdevice/opengles_3_0/arraybuffer.h>
 #include <nimble/core/ilockable.h>
 
 //////////////////////////////////////////////////////////////////////////
 
 using namespace nimble;
-using namespace nimble::renderdevice::opengles_2_0;
+using namespace nimble::renderdevice::opengles_3_0;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -159,12 +159,10 @@ char* ArrayBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uin
     core::assert_error((offset + size) <= this->getBufferSize());
     
     //! maps RenderDevice enums to GL
-    //! note: OpenGLES 1.1 doesn't support reading on locks
-    //! note: use a local buffer for reading
     static int bufferLockMap[core::kMaxLockTypes] ={
-        -1,
-        GL_WRITE_ONLY_OES,
-        -1};
+        GL_MAP_READ_BIT,
+        GL_MAP_WRITE_BIT,
+        GL_MAP_READ_BIT | GL_MAP_WRITE_BIT};
     core::assert_error(bufferLockMap[lockType] != -1);
     
     // bind buffer if not already done so
@@ -183,7 +181,7 @@ char* ArrayBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uin
     
     // map our buffer
     GLenum readWrite = bufferLockMap[lockType];
-    void *ptr = GLDEBUG(glMapBufferOES(m_target, readWrite));
+    void *ptr = GLDEBUG(glMapBufferRange(m_target, offset, size, readWrite));
     if(ptr){
         return &((char*)ptr)[offset];
     }

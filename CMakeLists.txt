@@ -10,7 +10,7 @@
 # ================================================================
 
 cmake_minimum_required(VERSION 2.8)
-project(nimblerenderdeviceopengl)
+project(nimblerenderdeviceopengles)
 
 # ================================================================
 
@@ -77,6 +77,27 @@ set(variables
   CMAKE_CXX_FLAGS_RELWITHDEBINFO
 )
 
+# ================================================================
+
+message(STATUS "Native system is " ${CMAKE_SYSTEM_NAME})
+if(NOT DEFINED NIMBLE_TARGET_IOS AND NOT DEFINED NIMBLE_TARGET_OSX AND NOT DEFINED NIMBLE_TARGET_WIN32)
+  if(WIN32)
+    set(NIMBLE_TARGET_WIN32 1)
+  elseif(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(NIMBLE_TARGET_OSX 1)
+  endif()
+endif()
+if(NIMBLE_TARGET_IOS)
+  message(STATUS "Targeting iOS Platform")
+  set(TARGET_PLATFORM_NAME "ios")
+elseif(NIMBLE_TARGET_OSX)
+  message(STATUS "Targeting OSX Platform")
+  set(TARGET_PLATFORM_NAME "osx")
+elseif(NIMBLE_TARGET_WIN32)
+  message(STATUS "Targeting NIMBLE_TARGET_WIN32 Platform")
+  set(TARGET_PLATFORM_NAME "win32")
+endif()
+
 if(NIMBLE_VISUALSTUDIO_2012)
     set(TARGET_VSS_VERSION "vs2012")
 elseif(NIMBLE_VISUALSTUDIO_2010)
@@ -135,7 +156,7 @@ if(NIMBLE_ENABLE_COVERAGEFLAGS)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNIMBLE_RELEASE -fprofile-arcs -ftest-coverage")
 endif()
 if(NIMBLE_TARGET_IOS)
-    set(SDKVER "7.1")
+    set(SDKVER "8.1")
     set(DEVROOT "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer")
     set(SDKROOT "${DEVROOT}/SDKs/iPhoneOS${SDKVER}.sdk")
     set(CMAKE_OSX_SYSROOT "${SDKROOT}")
@@ -176,23 +197,31 @@ endif()
 message(STATUS "Looking for external packages...")
 
 find_package(nimble REQUIRED)
-include_directories(${nimble_INCLUDE_DIRS})
 
 # ================================================================
 # Generate nimble lib
 # ================================================================
 
 # gather our source and header files
-file(GLOB_RECURSE Src ./source/*.cpp)
-file(GLOB_RECURSE Inc ./include/*.h)
+if(NIMBLE_OPENGLES_1_1)
+  file(GLOB_RECURSE Src ./source/nimble/renderdevice/opengles_1_1/*.cpp)
+  file(GLOB_RECURSE Inc ./include/nimble/renderdevice/opengles_1_1/*.h)
+elseif(NIMBLE_opengles_3_0)
+  file(GLOB_RECURSE Src ./source/nimble/renderdevice/opengles_3_0/*.cpp)
+  file(GLOB_RECURSE Inc ./include/nimble/renderdevice/opengles_3_0/*.h)
+elseif(NIMBLE_OPENGLES_3_0)
+  file(GLOB_RECURSE Src ./source/nimble/renderdevice/opengles_3_0/*.cpp)
+  file(GLOB_RECURSE Inc ./include/nimble/renderdevice/opengles_3_0/*.h)
+endif()
 
 # ================================================================
 
 # create our static nimble library
+include_directories(${nimble_INCLUDE_DIRS})
 include_directories(./include)
 include_directories(./source)
 set(Files ${Src} ${Inc})
 list(SORT Files)
-add_library(nimblerenderdeviceopengl ${Files})
+add_library(nimblerenderdeviceopengles ${Files})
 
 # ================================================================

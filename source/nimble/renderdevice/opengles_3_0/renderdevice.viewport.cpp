@@ -5,12 +5,12 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice/opengles_2_0/renderdevice.h>
+#include <nimble/renderdevice/opengles_3_0/renderdevice.h>
 
 //////////////////////////////////////////////////////////////////////////
 
 using namespace nimble;
-using namespace nimble::renderdevice::opengles_2_0;
+using namespace nimble::renderdevice::opengles_3_0;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -20,9 +20,9 @@ using namespace nimble::renderdevice::opengles_2_0;
 //! \param width the viewport width
 //! \param height the viewport height
 void RenderDevice::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height){
-    m_context.m_viewport.setOrigin(math::Point2i(x, y));
+    m_context.m_viewport.setOrigin(math::Vector2i(x, y));
     m_context.m_viewport.setSize(math::Vector2i(width, height));
-    glViewport(x, y, width, height);
+    GLDEBUG(glViewport(x, y, width, height));
 }
 
 //////////////////////////////////////////////////////////////////////////

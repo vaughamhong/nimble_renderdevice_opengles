@@ -5,12 +5,13 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#ifndef __nimble_renderdevice_opengles_2_0_texture_h__
-#define __nimble_renderdevice_opengles_2_0_texture_h__
+#ifndef __nimble_renderdevice_opengles_3_0_texture_h__
+#define __nimble_renderdevice_opengles_3_0_texture_h__
 
 //////////////////////////////////////////////////////////////////////////
 
-#include <nimble/renderdevice/opengles_2_0/common.h>
+#include <nimble/renderdevice/opengles_3_0/common.h>
+#include <nimble/renderdevice/opengles_3_0/arraybuffer.h>
 #include <nimble/renderdevice/itexture.h>
 #include <nimble/renderdevice/irenderdevice.h>
 #include <nimble/core/Lockable.h>
@@ -19,24 +20,24 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#define GLES20_TEXTURE_TUPLE_SET \
-GLES20_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_BYTE,       sizeof(char) * 3) \
-GLES20_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_SHORT,      sizeof(short) * 3) \
-GLES20_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_FLOAT,               sizeof(float) * 3) \
+#define GLES_TEXTURE_TUPLE_SET \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_BYTE,       sizeof(char) * 3) \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_SHORT,      sizeof(short) * 3) \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_FLOAT,               sizeof(float) * 3) \
 \
-GLES20_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
-GLES20_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_SHORT,      sizeof(short) * 4) \
-GLES20_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_FLOAT,               sizeof(float) * 4) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_SHORT,      sizeof(short) * 4) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_FLOAT,               sizeof(float) * 4) \
 \
-GLES20_TEXTURE_TUPLE(GL_BGRA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
+GLES_TEXTURE_TUPLE(GL_BGRA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
 \
-GLES20_TEXTURE_TUPLE(GL_DEPTH_COMPONENT16,      GL_DEPTH_COMPONENT16,       GL_UNSIGNED_SHORT,      sizeof(short) * 3)
+GLES_TEXTURE_TUPLE(GL_DEPTH_COMPONENT16,      GL_DEPTH_COMPONENT16,       GL_UNSIGNED_SHORT,      sizeof(short) * 3)
 
 //////////////////////////////////////////////////////////////////////////
 
 namespace nimble{
 	namespace renderdevice{
-        namespace opengles_2_0{
+        namespace opengles_3_0{
             class RenderDevice;
             
             //! OpenGLES Support details
@@ -52,7 +53,7 @@ namespace nimble{
             , public resource::Resource{
             private:
                 
-                renderdevice::opengles_2_0::ArrayBuffer m_arrayBuffer;
+                renderdevice::opengles_3_0::ArrayBuffer m_arrayBuffer;
                 GLuint                                  m_textureHandle;
                 bool                                    m_created;
                 

@@ -5,13 +5,13 @@
 // file 'license.txt', which is part of this source code package.
 //
 
-#include <nimble/renderdevice-opengles_2_0/renderdevice.h>
-#include <nimble/renderdevice-opengles_2_0/framebuffer.h>
-#include <nimble/renderdevice-opengles_2_0/shaderprogram.h>
-#include <nimble/renderdevice-opengles_2_0/vertexbuffer.h>
-#include <nimble/renderdevice-opengles_2_0/indexbuffer.h>
-#include <nimble/renderdevice-opengles_2_0/texture.h>
-#include <nimble/renderdevice-opengles_2_0/mappings.h>
+#include <nimble/renderdevice/opengles_2_0/renderdevice.h>
+#include <nimble/renderdevice/opengles_2_0/framebuffer.h>
+#include <nimble/renderdevice/opengles_2_0/shaderprogram.h>
+#include <nimble/renderdevice/opengles_2_0/vertexbuffer.h>
+#include <nimble/renderdevice/opengles_2_0/indexbuffer.h>
+#include <nimble/renderdevice/opengles_2_0/texture.h>
+#include <nimble/renderdevice/opengles_2_0/mappings.h>
 #include <nimble/core/debug.h>
 
 //////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ bool RenderDevice::bindFrameBuffer(renderdevice::IFrameBuffer* pFrameBuffer, boo
         glBindFramebuffer(GL_FRAMEBUFFER, pNativeFrameBuffer->getFrameBufferHandle());
         return true;
     }else{
-        core::logError("graphics", "Failed to query and bind a native frame buffer");
+        core::logger_error("graphics", "Failed to query and bind a native frame buffer");
         return false;
     }
 }
@@ -61,7 +61,7 @@ bool RenderDevice::bindIndexBuffer(renderdevice::IIndexBuffer* pIndexBuffer, boo
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pNativeIndexBuffer->getArrayBufferHandle());
         return true;
     }else{
-        core::logError("graphics", "Failed to query and bind a native index buffer");
+        core::logger_error("graphics", "Failed to query and bind a native index buffer");
         return false;
     }
 }
@@ -137,7 +137,7 @@ bool RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer, 
 //! sets texture
 //! \param textureUnit the index of the texture unit to replace
 //! \param pTexture the texture data
-bool RenderDevice::bindTexture(core::UInt32 textureUnit, renderdevice::ITexture* pTexture, bool force){
+bool RenderDevice::bindTexture(uint32_t textureUnit, renderdevice::ITexture* pTexture, bool force){
 	if(!m_context.m_pShaderProgram){
         core::logWarning("graphics", "No shader program to bind to");
         return false;
@@ -191,7 +191,7 @@ bool RenderDevice::bindShaderProgram(renderdevice::IShaderProgram* pShaderProgra
         glUseProgram(pNativeShaderProgram->getShaderProgramHandle());
         return true;
     }else{
-        core::logError("graphics", "Failed to query and bind a native shader");
+        core::logger_error("graphics", "Failed to query and bind a native shader");
         return false;
     }
 }

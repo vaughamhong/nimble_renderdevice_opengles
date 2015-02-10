@@ -1,8 +1,8 @@
 ROOT=`pwd`
-PROJ_DIR=$ROOT/projects/xcode_osx
-BUILD_DIR=$ROOT/builds/xcode_osx
-LIB_DIR=$ROOT/builds/xcode_osx/libs
-BIN_DIR=$ROOT/builds/xcode_osx/bins
+PROJ_DIR=$ROOT/projects/xcode_ios
+BUILD_DIR=$ROOT/builds/xcode_ios
+LIB_DIR=$ROOT/builds/xcode_ios/libs
+BIN_DIR=$ROOT/builds/xcode_ios/bins
 rm -rf $PROJ_DIR
 mkdir -p $PROJ_DIR
 mkdir -p $LIB_DIR
@@ -12,8 +12,8 @@ cmake \
 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=$LIB_DIR \
 -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=$LIB_DIR \
 -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=$BIN_DIR \
--DNIMBLE_TARGET_OSX=1 \
--DCMAKE_OSX_ARCHITECTURES=x86_64 \
+-DNIMBLE_TARGET_IOS=1 \
+-DNIMBLE_OPENGLES_3_0=1 \
 -DXCODE=1 \
 -G "Xcode" $ROOT
-pushd
+popd
