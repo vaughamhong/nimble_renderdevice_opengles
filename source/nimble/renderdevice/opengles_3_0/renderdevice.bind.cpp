@@ -33,7 +33,7 @@ void RenderDevice::bindFrameBuffer(renderdevice::IFrameBuffer* pFrameBuffer){
     // bind native frame buffer
     renderdevice::opengles_3_0::FrameBuffer* pNativeFrameBuffer = dynamic_cast<renderdevice::opengles_3_0::FrameBuffer*>(pFrameBuffer);
     if(pNativeFrameBuffer == 0){
-        core::logger_error("graphics", "Failed to bind frame buffer - invalid native frame buffer");
+        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to bind frame buffer - invalid native frame buffer");
         return;
     }
     
@@ -55,14 +55,14 @@ void RenderDevice::bindIndexBuffer(renderdevice::IIndexBuffer* pIndexBuffer){
     //! make sure we have a valid native index buffer
     renderdevice::opengles_3_0::IndexBuffer* pNativeIndexBuffer = dynamic_cast<renderdevice::opengles_3_0::IndexBuffer*>(pIndexBuffer);
     if(!pNativeIndexBuffer){
-        core::logger_error("graphics", "Failed to bind index buffer - invalid native index buffer");
+        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to bind index buffer - invalid native index buffer");
         return;
     }
     
-    // early exit if already bound
-    if(m_context.m_pIndexBuffer == pIndexBuffer){
-        return;
-    }
+//    // early exit if already bound
+//    if(m_context.m_pIndexBuffer == pIndexBuffer){
+//        return;
+//    }
     
     // bind our array buffer
     m_context.m_pIndexBuffer = pIndexBuffer;
@@ -95,10 +95,10 @@ void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
         return;
     }
     
-    // early exit if already bound
-    if(m_context.m_pVertexBuffer == pVertexBuffer){
-        return;
-    }
+//    // early exit if already bound
+//    if(m_context.m_pVertexBuffer == pVertexBuffer){
+//        return;
+//    }
     
     // bind our array buffer
     m_context.m_pVertexBuffer = pVertexBuffer;
@@ -111,13 +111,13 @@ void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
     assert(vertexFormat.getVertexStride() > 0);
     
     // attach each vertex attribute
-    unsigned int numAttributes = vertexFormat.getNumAttributes();
-    unsigned int vertexStride = vertexFormat.getVertexStride();
+    size_t numAttributes = vertexFormat.getNumAttributes();
+    size_t vertexStride = vertexFormat.getVertexStride();
     for(unsigned int i = 0; i < numAttributes; ++i){
         // attribute information
         const char *name = vertexFormat.getAttributeName(i);
         renderdevice::VertexFormat::eAttributeType vertexType = vertexFormat.getAttributeType(i);
-        
+
         // gl attribute information
         GLenum type = gVertexAttributeTypeMap[vertexType];
         unsigned int dimension = gVertexAttributeTypeDimensionMap[vertexType];
@@ -127,8 +127,11 @@ void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
         
         // bind attribute
         if(attributeHandle >= 0){
+            core::logger_info("graphics", "Binding vertex attribute %s", name);
             GLDEBUG(glEnableVertexAttribArray(attributeHandle));
-            GLDEBUG(glVertexAttribPointer(attributeHandle, dimension, type, normalize, vertexStride, (const GLvoid*)offset));
+            GLDEBUG(glVertexAttribPointer(attributeHandle, dimension, type, normalize, (int32_t)vertexStride, (const GLvoid*)offset));
+        }else{
+            core::logger_info("graphics", "Failed to bind vertex attribute %s", name);
         }
     }
 }
@@ -139,6 +142,8 @@ void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
 //! \param textureUnit the index of the texture unit to replace
 //! \param pTexture the texture data
 void RenderDevice::bindTexture(uint32_t textureUnit, renderdevice::ITexture* pTexture){
+    core::logger_info("graphics", "???????????");
+
     //  make sure we have a valid shader program to bind to
     if(!m_context.m_pShaderProgram){
         core::logger_warning("graphics", "No shader program to bind to");
@@ -174,10 +179,10 @@ void RenderDevice::bindShaderProgram(renderdevice::IShaderProgram* pShaderProgra
     m_context.m_pVertexBuffer = 0;
     m_context.m_pIndexBuffer = 0;
     
-    // early exit if already bound
-    if(m_context.m_pShaderProgram == pShaderProgram){
-        return;
-    }
+//    // early exit if already bound
+//    if(m_context.m_pShaderProgram == pShaderProgram){
+//        return;
+//    }
     // unbinding shader program
     if(pShaderProgram == 0){
         GLDEBUG(glUseProgram(0));

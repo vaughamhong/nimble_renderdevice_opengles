@@ -18,13 +18,14 @@ using namespace nimble::renderdevice::opengles_3_0;
 void RenderDevice::patchShaderProgramMatrixParams(){
     if(m_context.m_pShaderProgram){
         // if the shader has a matrix param and it has changed, patch the shader with the new param
-#define SHADERPARAM_TUPLE(NAME, SHADERNAME) \
-if(m_context.m_shaderHas##NAME##ShaderParam && m_context.m_final##NAME##MatrixChanged){ \
-m_context.m_pShaderProgram->setShaderParamByName(SHADERNAME, m_context.m_final##NAME##Matrix.transpose().getBuffer()); \
-m_context.m_final##NAME##MatrixChanged = false; \
-}
-        SHADERPARAM_TUPLESET
-#undef SHADERPARAM_TUPLE
+        #define SHADERPARAM_TUPLE(NAME, SHADERNAME) \
+            if(m_context.m_shaderHas##NAME##ShaderParam && m_context.m_final##NAME##MatrixChanged){ \
+                float *pBuffer = (float*)m_context.m_final##NAME##Matrix.transpose().getBuffer();\
+                m_context.m_pShaderProgram->setShaderParamByName(SHADERNAME, pBuffer); \
+                m_context.m_final##NAME##MatrixChanged = false; \
+            }
+            SHADERPARAM_TUPLESET
+        #undef SHADERPARAM_TUPLE
     }
 }
 

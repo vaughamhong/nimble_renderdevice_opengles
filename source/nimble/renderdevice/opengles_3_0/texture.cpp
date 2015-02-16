@@ -60,14 +60,14 @@ Texture::Texture(image::Image& image, uint32_t usage)
     setFilterMode(renderdevice::kTextureFilterParamMin, renderdevice::kDefaultTextureFilterMode);
     setFilterMode(renderdevice::kTextureFilterParamMag, renderdevice::kDefaultTextureFilterMode);
     createBuffers();
-    
+
     // copy our source data to our destination
     char* pDestPointer = 0;
     if(this->lock(core::kLockTypeWrite, (char**)&pDestPointer)){
         memcpy(pDestPointer, image.getBuffer(), getBufferSize());
         this->unlock();
     }else{
-        core::logger_error("graphics", "Failed to lock destination texture buffer");
+        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock destination texture buffer");
     }
 }
 //! Constructor
@@ -96,11 +96,11 @@ Texture::Texture(Texture& texture)
             this->unlock();
             texture.unlock();
         }else{
-            core::logger_error("graphics", "Failed to lock destination texture buffer");
+            core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock destination texture buffer");
             texture.unlock();
         }
     }else{
-        core::logger_error("graphics", "Failed to lock source texture buffer");
+        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock source texture buffer");
     }
 }
 //! Destructor
@@ -113,16 +113,16 @@ Texture::~Texture(){
 //! Initialize this object's data
 //! \return true if initialization was successful
 void Texture::createBuffers(){
-    core::assert_error(!m_created);
-    core::assert_error(m_dimensionValues[0] > 0);
-    core::assert_error(m_dimensionValues[1] > 0);
-    core::assert_error(m_dimension != renderdevice::kUnknownTextureDimension);
-    core::assert_error(m_textureFormat != renderdevice::kUnknownTextureFormat);
+    NIMBLE_ASSERT(!m_created);
+    NIMBLE_ASSERT(m_dimensionValues[0] > 0);
+    NIMBLE_ASSERT(m_dimensionValues[1] > 0);
+    NIMBLE_ASSERT(m_dimension != renderdevice::kUnknownTextureDimension);
+    NIMBLE_ASSERT(m_textureFormat != renderdevice::kUnknownTextureFormat);
     
     uint32_t width = m_dimensionValues[0];
     uint32_t height = m_dimensionValues[1];
     uint32_t bufferSize = getBufferSize();
-    core::assert_error(bufferSize > 0);
+    NIMBLE_ASSERT(bufferSize > 0);
     
     // generate a texture handle
     GLDEBUG(glGenTextures(1, &m_textureHandle));
@@ -181,7 +181,7 @@ void Texture::createBuffers(){
 //! Destroy this object's data
 //! \return true if destruction was successful
 void Texture::destroyBuffers(){
-    core::assert_error(m_created);
+    NIMBLE_ASSERT(m_created);
     
     if(m_textureHandle){
         GLDEBUG(glDeleteTextures(1, &m_textureHandle));
@@ -221,13 +221,13 @@ uint32_t Texture::getDepth() const{
 }
 //! gets the bytes per pixel
 uint32_t Texture::getBytesPerPixel() const{
-    core::assert_error(m_textureFormat != renderdevice::kUnknownTextureFormat);
+    NIMBLE_ASSERT(m_textureFormat != renderdevice::kUnknownTextureFormat);
     return gTexturePixelSizeMap[m_textureFormat];
 }
 //! gets the texture size in bytes
 uint32_t Texture::getBufferSize() const{
-    core::assert_error(m_dimensionValues[0] > 0);
-    core::assert_error(m_dimensionValues[1] > 0);
+    NIMBLE_ASSERT(m_dimensionValues[0] > 0);
+    NIMBLE_ASSERT(m_dimensionValues[1] > 0);
     return m_dimensionValues[0] * m_dimensionValues[1] * getBytesPerPixel();
 }
 //! gets the texture's sort index

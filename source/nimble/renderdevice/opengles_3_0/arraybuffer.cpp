@@ -26,8 +26,8 @@ ArrayBuffer::ArrayBuffer(uint32_t numElements, uint32_t elementSize, uint32_t us
 ,m_created(false)
 ,m_numElements(numElements)
 ,m_elementSize(elementSize){
-    core::assert_error(m_numElements > 0);
-    core::assert_error(m_elementSize > 0);
+    NIMBLE_ASSERT(m_numElements > 0);
+    NIMBLE_ASSERT(m_elementSize > 0);
     createBuffers();
 }
 //! a copy constructor
@@ -39,8 +39,8 @@ ArrayBuffer::ArrayBuffer(ArrayBuffer& arrayBuffer)
 ,m_created(false)
 ,m_numElements(arrayBuffer.m_numElements)
 ,m_elementSize(arrayBuffer.m_elementSize){
-    core::assert_error(m_numElements > 0);
-    core::assert_error(m_elementSize > 0);
+    NIMBLE_ASSERT(m_numElements > 0);
+    NIMBLE_ASSERT(m_elementSize > 0);
     createBuffers();
 
     // copy our source data to our destination
@@ -52,11 +52,11 @@ ArrayBuffer::ArrayBuffer(ArrayBuffer& arrayBuffer)
             this->unlock();
             arrayBuffer.unlock();
         }else{
-            core::logger_error("graphics", "Failed to lock destination array buffer");
+            core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock destination array buffer");
             arrayBuffer.unlock();
         }
     }else{
-        core::logger_error("graphics", "Failed to lock source array buffer");
+        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock source array buffer");
     }
 }
 //! a destructor
@@ -91,12 +91,12 @@ size_t ArrayBuffer::getBufferSize() const{
 
 //!	creates array buffers
 void ArrayBuffer::createBuffers(){
-    core::assert_error(!m_created);
-    core::assert_error(m_numElements > 0);
-    core::assert_error(m_elementSize > 0);
+    NIMBLE_ASSERT(!m_created);
+    NIMBLE_ASSERT(m_numElements > 0);
+    NIMBLE_ASSERT(m_elementSize > 0);
     
-    uint32_t bufferSize = getBufferSize();
-    core::assert_error(bufferSize > 0);
+    size_t bufferSize = getBufferSize();
+    NIMBLE_ASSERT(bufferSize > 0);
     
     // track previously bound
     GLint boundHandle = 0;
@@ -123,7 +123,7 @@ void ArrayBuffer::createBuffers(){
 }
 //!	destroys array buffers
 void ArrayBuffer::destroyBuffers(){
-    core::assert_error(m_created);
+    NIMBLE_ASSERT(m_created);
     
     if(m_handle){
         GLDEBUG(glDeleteBuffers(1, &m_handle));
@@ -147,40 +147,40 @@ GLuint ArrayBuffer::getTargetType() const{
 
 //! attempts to map a buffer
 char* ArrayBuffer::mapBuffer(core::eLockType lockType){
-    core::assert_error(m_created);
-    core::assert_error(!isLocked());
+    NIMBLE_ASSERT(m_created);
+    NIMBLE_ASSERT(!isLocked());
     return this->mapBufferRange(lockType, 0, this->getBufferSize());
 }
 //! attempts to map a buffer
 char* ArrayBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uint32_t size){
-    core::assert_error(m_created);
-    core::assert_error(!isLocked());
-    core::assert_error(offset < this->getBufferSize());
-    core::assert_error((offset + size) <= this->getBufferSize());
+    NIMBLE_ASSERT(m_created);
+    NIMBLE_ASSERT(!isLocked());
+    NIMBLE_ASSERT(offset < this->getBufferSize());
+    NIMBLE_ASSERT((offset + size) <= this->getBufferSize());
     
     //! maps RenderDevice enums to GL
     static int bufferLockMap[core::kMaxLockTypes] ={
         GL_MAP_READ_BIT,
         GL_MAP_WRITE_BIT,
         GL_MAP_READ_BIT | GL_MAP_WRITE_BIT};
-    core::assert_error(bufferLockMap[lockType] != -1);
+    NIMBLE_ASSERT(bufferLockMap[lockType] != -1);
     
     // bind buffer if not already done so
     GLDEBUG(glBindBuffer(m_target, m_handle));
     
-    // tell driver to orphan our previous buffer and
-    // allocate a new one. This removes the need to synchronize (which
-    // blocks until commands are flushed).
-    if(m_usage & renderdevice::kArrayUsageVolitile){
-        GLDEBUG(glBufferData(m_target, size, 0, GL_DYNAMIC_DRAW));
-    }else if(m_usage & renderdevice::kArrayUsageStatic){
-        GLDEBUG(glBufferData(m_target, size, 0, GL_STATIC_DRAW));
-    }else{
-        GLDEBUG(glBufferData(m_target, size, 0, GL_DYNAMIC_DRAW));
-    }
+//    // tell driver to orphan our previous buffer and
+//    // allocate a new one. This removes the need to synchronize (which
+//    // blocks until commands are flushed).
+//    if(m_usage & renderdevice::kArrayUsageVolitile){
+//        GLDEBUG(glBufferData(m_target, size, 0, GL_DYNAMIC_DRAW));
+//    }else if(m_usage & renderdevice::kArrayUsageStatic){
+//        GLDEBUG(glBufferData(m_target, size, 0, GL_STATIC_DRAW));
+//    }else{
+//        GLDEBUG(glBufferData(m_target, size, 0, GL_DYNAMIC_DRAW));
+//    }
     
     // map our buffer
-    GLenum readWrite = bufferLockMap[lockType];
+    GLenum readWrite = bufferLockMap[lockType];// | GL_MAP_INVALIDATE_BUFFER_BIT;
     void *ptr = GLDEBUG(glMapBufferRange(m_target, offset, size, readWrite));
     if(ptr){
         return &((char*)ptr)[offset];
@@ -190,7 +190,7 @@ char* ArrayBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uin
 }
 //! attempts to unmap a buffer
 void ArrayBuffer::unmapBuffer(){
-    core::assert_error(m_created);
+    NIMBLE_ASSERT(m_created);
     GLDEBUG(glUnmapBuffer(m_target));
     GLDEBUG(glBindBuffer(m_target, 0));
 }

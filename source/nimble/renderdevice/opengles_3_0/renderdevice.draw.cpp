@@ -23,7 +23,7 @@ using namespace nimble::renderdevice::opengles_3_0;
 //! draws with current state
 void RenderDevice::draw(){
     renderdevice::IIndexBuffer *pIndexBuffer = m_context.m_pIndexBuffer;
-    core::assert_error(pIndexBuffer != 0);
+    NIMBLE_ASSERT(pIndexBuffer != 0);
     
     // draw data
     unsigned int mode = gIndexFormatMap[pIndexBuffer->getPrimitiveType()];
@@ -45,7 +45,7 @@ void RenderDevice::draw(){
 //! draws with current state
 void RenderDevice::drawElements(uint32_t startIndex, uint32_t numIndices){
     renderdevice::IIndexBuffer *pIndexBuffer = m_context.m_pIndexBuffer;
-    core::assert_error(pIndexBuffer != 0);
+    NIMBLE_ASSERT(pIndexBuffer != 0);
     
     // draw data
     uint32_t mode = gIndexFormatMap[pIndexBuffer->getPrimitiveType()];
@@ -56,7 +56,8 @@ void RenderDevice::drawElements(uint32_t startIndex, uint32_t numIndices){
     this->patchShaderProgramMatrixParams();
     
     // draw
-    size_t byteOffset = startIndex * sizeof(unsigned int);
+    core::logger_info("graphics", "drawElements %d %d", startIndex, numIndices);
+    size_t byteOffset = startIndex * renderdevice::getIndexTypeSize(renderdevice::kIndexTypeUInt8);
     if(indexType == renderdevice::kIndexTypeUInt8){
         GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_BYTE, BUFFER_OFFSET(byteOffset)));
     }else if(indexType == renderdevice::kIndexTypeUInt16){

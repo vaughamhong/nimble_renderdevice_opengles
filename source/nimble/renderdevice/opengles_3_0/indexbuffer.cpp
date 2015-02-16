@@ -17,7 +17,7 @@ using namespace nimble::renderdevice::opengles_3_0;
 
 //! a constructor
 IndexBuffer::IndexBuffer(renderdevice::ePrimitiveType primitiveType, renderdevice::eIndexType indexType, uint32_t numIndices, uint32_t usage)
-:m_arrayBuffer(numIndices, gIndexIndexTypeSizeMap[indexType], usage, GL_ARRAY_BUFFER)
+:m_arrayBuffer(numIndices, gIndexIndexTypeSizeMap[indexType], usage, GL_ELEMENT_ARRAY_BUFFER)
 ,m_primitiveType(primitiveType)
 ,m_indexType(indexType){
 }

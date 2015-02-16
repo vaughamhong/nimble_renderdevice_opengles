@@ -10,7 +10,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#if defined(__APPLE__)
+#if defined(NIMBLE_TARGET_IOS)
 	#include "TargetConditionals.h"
 	#if defined(TARGET_OS_IPHONE) || defined(TARGET_IPHONE_SIMULATOR)
 		#import <OpenGLES/ES3/gl.h>
@@ -18,16 +18,19 @@
     #else
         #pragma message("Warning - trying to include OpenGLES drivers for unsupported platform")
 	#endif
+#elif defined(NIMBLE_TARGET_ANDROID)
+    #include <GLES3/gl3.h>
 #else
     #pragma message("Warning - trying to include OpenGLES drivers for unsupported platform")
 #endif
 
-#if defined(NIMBLE_DEBUG)
+#if 0//defined(NIMBLE_DEBUG)
     #define GLDEBUG(x) \
         x; \
         { \
             GLenum e; \
             while((e = glGetError()) != GL_NO_ERROR){ \
+            core::logger_info("graphics", __LINE__, __FILE__, "Error at line number %d, in file %s. glGetError() returned %i for call %s\n",__LINE__, __FILE__, e, #x); \
             fprintf(stderr, "Error at line number %d, in file %s. glGetError() returned %i for call %s\n",__LINE__, __FILE__, e, #x); \
             } \
         }

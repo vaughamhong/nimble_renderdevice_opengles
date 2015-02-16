@@ -51,7 +51,7 @@ bool Shader::compileWithSource(const char *pData){
     }else if(getShaderType() == renderdevice::kShaderTypeVertex){
         m_shaderHandle = GLDEBUG(glCreateShader(GL_VERTEX_SHADER));
     }else{
-        core::logger_error("graphics", "Invalid shader type detected");
+        core::logger_error(__LINE__, __FILE__, "graphics", "Invalid shader type detected");
     }
     GLDEBUG(glShaderSource(m_shaderHandle, 1, &source, 0));
     GLDEBUG(glCompileShader(m_shaderHandle));

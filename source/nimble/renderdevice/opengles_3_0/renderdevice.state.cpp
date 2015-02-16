@@ -95,7 +95,7 @@ void RenderDevice::setDepthFunc(renderdevice::eRenderDepthFunc func){
     if(func == renderdevice::kRenderDepthFuncGreater){glDepthEnum |= GL_GREATER;}
     if(func == renderdevice::kRenderDepthFuncEqual){glDepthEnum |= GL_EQUAL;}
     
-    core::assert_error(glDepthEnum != 0);
+    NIMBLE_ASSERT(glDepthEnum != 0);
     GLDEBUG(glDepthFunc(glDepthEnum));
 }
 //! Stencil functions
@@ -111,7 +111,7 @@ void RenderDevice::setStencilFunc(renderdevice::eRenderStencilFunc func, int32_t
     if(func == renderdevice::kRenderStencilFuncEqual){glStencilEnum = GL_EQUAL;}
     if(func == renderdevice::kRenderStencilFuncNotEqual){glStencilEnum = GL_NOTEQUAL;}
     
-    core::assert_error(glStencilEnum != 0);
+    NIMBLE_ASSERT(glStencilEnum != 0);
     GLDEBUG(glStencilFunc(glStencilEnum, ref, mask));
 }
 //! Stencil operation
@@ -163,7 +163,7 @@ void RenderDevice::setCullFace(renderdevice::eRenderCullFace face){
     if(face == renderdevice::kRenderCullFaceFront){glCullFaceEnum = GL_FRONT;}
     if(face == renderdevice::kRenderCullFaceBack){glCullFaceEnum = GL_BACK;}
     
-    core::assert_error(glCullFaceEnum != 0);
+    NIMBLE_ASSERT(glCullFaceEnum != 0);
     GLDEBUG(glCullFace(glCullFaceEnum));
 }
 //! Blend function
@@ -183,8 +183,8 @@ void RenderDevice::setBlendFunc(renderdevice::eRenderBlendFactor srcScaler, rend
     if(destScaler == renderdevice::kRenderBlendFactorOne){glDestScaler = GL_ONE;}
     if(destScaler == renderdevice::kRenderBlendFactorZero){glDestScaler = GL_ZERO;}
     
-    core::assert_error(glSrcScaler != 0);
-    core::assert_error(glDestScaler != 0);
+    NIMBLE_ASSERT(glSrcScaler != 0);
+    NIMBLE_ASSERT(glDestScaler != 0);
     GLDEBUG(glBlendFunc(glSrcScaler, glDestScaler));
 }
 //! Front face orientation function
@@ -194,7 +194,7 @@ void RenderDevice::setFrontFaceOrientation(renderdevice::eRenderOrientation orie
     if(orientation == renderdevice::kRenderOrientationCounterClockwise){glFrontFaceOrientationEnum |= GL_CCW;}
     if(orientation == renderdevice::kRenderOrientationClockwise){glFrontFaceOrientationEnum |= GL_CW;}
     
-    core::assert_error(glFrontFaceOrientationEnum != 0);
+    NIMBLE_ASSERT(glFrontFaceOrientationEnum != 0);
     GLDEBUG(glFrontFace(glFrontFaceOrientationEnum));
 }
 

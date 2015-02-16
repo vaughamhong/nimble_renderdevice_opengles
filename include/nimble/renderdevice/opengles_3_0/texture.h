@@ -20,6 +20,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
+#if !defined(NIMBLE_TARGET_ANDROID)
 #define GLES_TEXTURE_TUPLE_SET \
 GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_BYTE,       sizeof(char) * 3) \
 GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_SHORT,      sizeof(short) * 3) \
@@ -29,9 +30,25 @@ GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNS
 GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_SHORT,      sizeof(short) * 4) \
 GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_FLOAT,               sizeof(float) * 4) \
 \
-GLES_TEXTURE_TUPLE(GL_BGRA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB8,                    GL_UNSIGNED_BYTE,       sizeof(char) * 3) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
 \
 GLES_TEXTURE_TUPLE(GL_DEPTH_COMPONENT16,      GL_DEPTH_COMPONENT16,       GL_UNSIGNED_SHORT,      sizeof(short) * 3)
+#else
+#define GLES_TEXTURE_TUPLE_SET \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_BYTE,       sizeof(char) * 3) \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_UNSIGNED_SHORT,      sizeof(short) * 3) \
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB,                     GL_FLOAT,               sizeof(float) * 3) \
+\
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_SHORT,      sizeof(short) * 4) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_FLOAT,               sizeof(float) * 4) \
+\
+GLES_TEXTURE_TUPLE(GL_RGB,                    GL_RGB8,                    GL_UNSIGNED_BYTE,       sizeof(char) * 3) \
+GLES_TEXTURE_TUPLE(GL_RGBA,                   GL_RGBA,                    GL_UNSIGNED_BYTE,       sizeof(char) * 4) \
+\
+GLES_TEXTURE_TUPLE(GL_DEPTH_COMPONENT16,      GL_DEPTH_COMPONENT16,       GL_UNSIGNED_SHORT,      sizeof(short) * 3)
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 
