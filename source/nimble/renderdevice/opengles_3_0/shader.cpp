@@ -51,7 +51,7 @@ bool Shader::compileWithSource(const char *pData){
     }else if(getShaderType() == renderdevice::kShaderTypeVertex){
         m_shaderHandle = GLDEBUG(glCreateShader(GL_VERTEX_SHADER));
     }else{
-        core::logger_error(__LINE__, __FILE__, "graphics", "Invalid shader type detected");
+        NIMBLE_LOG_ERROR("graphics", "Invalid shader type detected");
     }
     GLDEBUG(glShaderSource(m_shaderHandle, 1, &source, 0));
     GLDEBUG(glCompileShader(m_shaderHandle));
@@ -66,7 +66,7 @@ bool Shader::compileWithSource(const char *pData){
             char *pLogBuffer = (char*)malloc(maxLogLength);
             GLint loglen = 0;
             GLDEBUG(glGetShaderInfoLog(m_shaderHandle, (GLsizei)maxLogLength, &loglen, pLogBuffer));
-            core::logger_warning("graphics", "Shader compile log:\n%.*s", loglen, pLogBuffer);
+            NIMBLE_LOG_WARNING("graphics", "Shader compile log:\n%.*s", loglen, pLogBuffer);
             free(pLogBuffer);
         }
     }

@@ -67,7 +67,7 @@ Texture::Texture(image::Image& image, uint32_t usage)
         memcpy(pDestPointer, image.getBuffer(), getBufferSize());
         this->unlock();
     }else{
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock destination texture buffer");
+        NIMBLE_LOG_ERROR("graphics", "Failed to lock destination texture buffer");
     }
 }
 //! Constructor
@@ -96,11 +96,11 @@ Texture::Texture(Texture& texture)
             this->unlock();
             texture.unlock();
         }else{
-            core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock destination texture buffer");
+            NIMBLE_LOG_ERROR("graphics", "Failed to lock destination texture buffer");
             texture.unlock();
         }
     }else{
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock source texture buffer");
+        NIMBLE_LOG_ERROR("graphics", "Failed to lock source texture buffer");
     }
 }
 //! Destructor

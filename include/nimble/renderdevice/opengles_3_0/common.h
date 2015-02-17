@@ -30,7 +30,7 @@
         { \
             GLenum e; \
             while((e = glGetError()) != GL_NO_ERROR){ \
-            core::logger_info("graphics", __LINE__, __FILE__, "Error at line number %d, in file %s. glGetError() returned %i for call %s\n",__LINE__, __FILE__, e, #x); \
+            NIMBLE_LOG_INFO("graphics", __LINE__, __FILE__, "Error at line number %d, in file %s. glGetError() returned %i for call %s\n",__LINE__, __FILE__, e, #x); \
             fprintf(stderr, "Error at line number %d, in file %s. glGetError() returned %i for call %s\n",__LINE__, __FILE__, e, #x); \
             } \
         }

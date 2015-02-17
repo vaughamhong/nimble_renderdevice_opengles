@@ -95,13 +95,13 @@ void ShaderParamBlock::addShaderParam(renderdevice::IShaderParam const &param){
     int32_t uniformNameHash = core::hash(name);
     NameToParamIndex::iterator it = m_nameToParamIndex.find(uniformNameHash);
     if(it != m_nameToParamIndex.end()){
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to add shader param with name \"%s\"", name);
+        NIMBLE_LOG_ERROR("graphics", "Failed to add shader param with name \"%s\"", name);
         return;
     }
     
     renderdevice::opengles_3_0::ShaderParam const *pShaderParam = dynamic_cast<renderdevice::opengles_3_0::ShaderParam const*>(&param);
     if(pShaderParam == 0){
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to add shader param with name \"%s\"", name);
+        NIMBLE_LOG_ERROR("graphics", "Failed to add shader param with name \"%s\"", name);
         return;
     }
 
@@ -110,7 +110,7 @@ void ShaderParamBlock::addShaderParam(renderdevice::IShaderParam const &param){
     // add param to our list
     m_paramList.push_back(*pShaderParam);
     
-    core::logger_info("graphics", "(%d) addShaderParam: %s hash: %d", m_nameToParamIndex.size(), name, uniformNameHash);
+    NIMBLE_LOG_INFO("graphics", "(%d) addShaderParam: %s hash: %d", m_nameToParamIndex.size(), name, uniformNameHash);
 }
 
 //////////////////////////////////////////////////////////////////////////

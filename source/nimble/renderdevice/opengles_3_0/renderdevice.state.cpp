@@ -65,7 +65,7 @@ void RenderDevice::setGLRenderStateBlending(bool enabled){
     }
 }
 void RenderDevice::setGLRenderStateLighting(bool enabled){
-    core::logger_warning("graphics", "Failed to set lighting state - unsupported");
+    NIMBLE_LOG_WARNING("graphics", "Failed to set lighting state - unsupported");
 }
 void RenderDevice::setGLRenderStateTexturing(bool enabled){
     if(enabled){
@@ -81,7 +81,7 @@ void RenderDevice::setGLRenderStateTexturing(bool enabled){
 //! \param face the face to set fill mode
 //! \param mode the fill mode
 void RenderDevice::setFillMode(renderdevice::eRenderFace face, renderdevice::eRenderFillMode mode){
-    core::logger_warning("graphics", "Failed to set fill mode - unsupported");
+    NIMBLE_LOG_WARNING("graphics", "Failed to set fill mode - unsupported");
 }
 //! Depth functions
 //! \param func the depth compare mode

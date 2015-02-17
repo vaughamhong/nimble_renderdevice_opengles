@@ -22,48 +22,26 @@ using namespace nimble::renderdevice::opengles_3_0;
 
 //! draws with current state
 void RenderDevice::draw(){
-    renderdevice::IIndexBuffer *pIndexBuffer = m_context.m_pIndexBuffer;
-    NIMBLE_ASSERT(pIndexBuffer != 0);
-    
-    // draw data
-    unsigned int mode = gIndexFormatMap[pIndexBuffer->getPrimitiveType()];
-    unsigned int count = pIndexBuffer->getNumIndices();
-    unsigned int indexType = pIndexBuffer->getIndexType();
-    
-    // bind various internal parameters
-    this->patchShaderProgramMatrixParams();
-    
-    // draw
-    if(indexType == renderdevice::kIndexTypeUInt8){
-        GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_BYTE, 0));
-    }else if(indexType == renderdevice::kIndexTypeUInt16){
-        GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_SHORT, 0));
-    }else if(indexType == renderdevice::kIndexTypeUInt32){
-        GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_INT, 0));
-    }
+    uint32_t count = (uint32_t)m_context.m_pIndexBuffer->getNumIndices();
+    uint32_t indexType = m_context.m_pIndexBuffer->getIndexType();
+    uint32_t mode = m_context.m_pIndexBuffer->getPrimitiveType();
+    drawElements(0, count, indexType, mode);
 }
 //! draws with current state
-void RenderDevice::drawElements(uint32_t startIndex, uint32_t numIndices){
-    renderdevice::IIndexBuffer *pIndexBuffer = m_context.m_pIndexBuffer;
-    NIMBLE_ASSERT(pIndexBuffer != 0);
-    
-    // draw data
-    uint32_t mode = gIndexFormatMap[pIndexBuffer->getPrimitiveType()];
-    uint32_t count = numIndices;
-    unsigned int indexType = pIndexBuffer->getIndexType();
-    
-    // bind various internal parameters
-    this->patchShaderProgramMatrixParams();
+void RenderDevice::drawElements(uint32_t startIndex, uint32_t numIndices, uint32_t indexType, uint32_t mode){
+    // patch our shader program with the appropriate
+    // uniform matrix updates. We only update matrices that have changed.
+    this->patchShaderProgramWithUpdatedMatrices();
     
     // draw
-    core::logger_info("graphics", "drawElements %d %d", startIndex, numIndices);
-    size_t byteOffset = startIndex * renderdevice::getIndexTypeSize(renderdevice::kIndexTypeUInt8);
+    uint32_t glmode = gIndexFormatMap[mode];
+    size_t byteOffset = startIndex * renderdevice::getIndexTypeSize((renderdevice::eIndexType)indexType);
     if(indexType == renderdevice::kIndexTypeUInt8){
-        GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_BYTE, BUFFER_OFFSET(byteOffset)));
+        GLDEBUG(glDrawElements(glmode, numIndices, GL_UNSIGNED_BYTE, BUFFER_OFFSET(byteOffset)));
     }else if(indexType == renderdevice::kIndexTypeUInt16){
-        GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_SHORT, BUFFER_OFFSET(byteOffset)));
+        GLDEBUG(glDrawElements(glmode, numIndices, GL_UNSIGNED_SHORT, BUFFER_OFFSET(byteOffset)));
     }else if(indexType == renderdevice::kIndexTypeUInt32){
-        GLDEBUG(glDrawElements(mode, count, GL_UNSIGNED_INT, BUFFER_OFFSET(byteOffset)));
+        GLDEBUG(glDrawElements(glmode, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(byteOffset)));
     }
 }
 

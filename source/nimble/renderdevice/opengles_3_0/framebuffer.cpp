@@ -32,7 +32,7 @@ FrameBuffer::FrameBuffer(uint32_t width, uint32_t height, uint32_t flags)
     
     // set up depth (render buffer) if asked to do so
     if(m_flags & kFrameBufferFlagGenDepth24Stencil8){
-        NIMBLE_ASSERT_MSG(false, "Failed to initialize FrameBuffer - Depth24Stencil8 format not supported");
+        NIMBLE_ASSERT_PRINT(false, "Failed to initialize FrameBuffer - Depth24Stencil8 format not supported");
     }else{
         // generate appropriate depth buffer
         if(m_flags & kFrameBufferFlagGenDepth16){
@@ -41,23 +41,23 @@ FrameBuffer::FrameBuffer(uint32_t width, uint32_t height, uint32_t flags)
             GLDEBUG(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height));
             GLDEBUG(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferHandle));
         }else if(m_flags & kFrameBufferFlagGenDepth24){
-            NIMBLE_ASSERT_MSG(false, "Failed to initialize FrameBuffer - Depth24 format not supported");
+            NIMBLE_ASSERT_PRINT(false, "Failed to initialize FrameBuffer - Depth24 format not supported");
         }else if(m_flags & kFrameBufferFlagGenDepth32){
-            NIMBLE_ASSERT_MSG(false, "Failed to initialize FrameBuffer - Depth32 format not supported");
+            NIMBLE_ASSERT_PRINT(false, "Failed to initialize FrameBuffer - Depth32 format not supported");
         }
         
         // generate appropriate stencil buffer
         if(m_flags & kFrameBufferFlagGenStencil1){
-            NIMBLE_ASSERT_MSG(false, "Failed to initialize FrameBuffer - Stencil1 format not supported");
+            NIMBLE_ASSERT_PRINT(false, "Failed to initialize FrameBuffer - Stencil1 format not supported");
         }else if(m_flags & kFrameBufferFlagGenStencil4){
-            NIMBLE_ASSERT_MSG(false, "Failed to initialize FrameBuffer - Stencil4 format not supported");
+            NIMBLE_ASSERT_PRINT(false, "Failed to initialize FrameBuffer - Stencil4 format not supported");
         }else if(m_flags & kFrameBufferFlagGenStencil8){
             GLDEBUG(glGenRenderbuffers(1, &m_stencilBufferHandle));
             GLDEBUG(glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBufferHandle));
             GLDEBUG(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height));
             GLDEBUG(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBufferHandle));
         }else if(m_flags & kFrameBufferFlagGenStencil16){
-            NIMBLE_ASSERT_MSG(false, "Failed to initialize FrameBuffer - Stencil16 format not supported");
+            NIMBLE_ASSERT_PRINT(false, "Failed to initialize FrameBuffer - Stencil16 format not supported");
         }
     }
 }
@@ -134,18 +134,18 @@ void FrameBuffer::attachTextureTargets(renderdevice::eFrameBufferType *types, re
         
         // skip binding if texture dimensions are not correct
         if(pTexture->getDimension() != renderdevice::kTextureDimention2D){
-            core::logger_warning("renderer", "Failed to attach texture to frame buffer - mismatching dimensions");
+            NIMBLE_LOG_WARNING("renderer", "Failed to attach texture to frame buffer - mismatching dimensions");
             continue;
         }
         if(width != this->getWidth() || height != this->getHeight()){
-            core::logger_warning("renderer", "Failed to attach texture to frame buffer - mismatching dimensions");
+            NIMBLE_LOG_WARNING("renderer", "Failed to attach texture to frame buffer - mismatching dimensions");
             continue;
         }
         
         // get our native texture to work with
         renderdevice::opengles_3_0::Texture* pNativeTexture = dynamic_cast<renderdevice::opengles_3_0::Texture*>(pTexture);
         if(pNativeTexture == 0){
-            core::logger_error(__LINE__, __FILE__, "graphics", "Failed to attach invalid texture");
+            NIMBLE_LOG_ERROR("graphics", "Failed to attach invalid texture");
             continue;
         }
         
@@ -170,7 +170,7 @@ void FrameBuffer::attachTextureTargets(renderdevice::eFrameBufferType *types, re
                 break;
             }
             default:{
-                core::logger_error(__LINE__, __FILE__, "graphics", "Failed to attach texture to invalid target");
+                NIMBLE_LOG_ERROR("graphics", "Failed to attach texture to invalid target");
             }
         };
     }
@@ -211,7 +211,7 @@ void FrameBuffer::detachTextureTargets(renderdevice::eFrameBufferType *types, si
                 break;
             }
             default:{
-                core::logger_error(__LINE__, __FILE__, "graphics", "Failed to detach invalid target");
+                NIMBLE_LOG_ERROR("graphics", "Failed to detach invalid target");
                 break;
             }
         }
@@ -231,7 +231,7 @@ void FrameBuffer::setWriteTargets(uint32_t bufferMask){
     int32_t numTargets = 0;
     if(bufferMask & renderdevice::kFrameBufferDepthBit){targets[numTargets] = GL_DEPTH_ATTACHMENT; numTargets++;}
     if(bufferMask & renderdevice::kFrameBufferStencilBit){targets[numTargets] = GL_STENCIL_ATTACHMENT; numTargets++;}
-    if(bufferMask & renderdevice::kFrameBufferAccumulationBit){core::logger_warning("renderer", "Failed to set write target - accumulation buffer");}
+    if(bufferMask & renderdevice::kFrameBufferAccumulationBit){NIMBLE_LOG_WARNING("renderer", "Failed to set write target - accumulation buffer");}
     if(bufferMask & renderdevice::kFrameBufferColor0Bit){targets[numTargets] = GL_COLOR_ATTACHMENT0; numTargets++;}
     
     // bind buffer if not already done so

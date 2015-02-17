@@ -52,11 +52,11 @@ ArrayBuffer::ArrayBuffer(ArrayBuffer& arrayBuffer)
             this->unlock();
             arrayBuffer.unlock();
         }else{
-            core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock destination array buffer");
+            NIMBLE_LOG_ERROR("graphics", "Failed to lock destination array buffer");
             arrayBuffer.unlock();
         }
     }else{
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to lock source array buffer");
+        NIMBLE_LOG_ERROR("graphics", "Failed to lock source array buffer");
     }
 }
 //! a destructor
@@ -149,7 +149,7 @@ GLuint ArrayBuffer::getTargetType() const{
 char* ArrayBuffer::mapBuffer(core::eLockType lockType){
     NIMBLE_ASSERT(m_created);
     NIMBLE_ASSERT(!isLocked());
-    return this->mapBufferRange(lockType, 0, this->getBufferSize());
+    return this->mapBufferRange(lockType, 0, (uint32_t)this->getBufferSize());
 }
 //! attempts to map a buffer
 char* ArrayBuffer::mapBufferRange(core::eLockType lockType, uint32_t offset, uint32_t size){

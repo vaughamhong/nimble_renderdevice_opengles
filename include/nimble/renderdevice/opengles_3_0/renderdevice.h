@@ -140,7 +140,7 @@ namespace nimble{
                 //! draws with current state
                 virtual void draw();
                 //! draws with current state
-                virtual void drawElements(uint32_t startIndex, uint32_t numIndices);
+                virtual void drawElements(uint32_t startIndex, uint32_t numIndices, uint32_t indexType, uint32_t mode);
                 
                 //! starts rendering a frame
                 virtual void beginFrame();
@@ -314,7 +314,7 @@ namespace nimble{
             private:
                 
                 //! Sets our shader program matrix states
-                virtual void patchShaderProgramMatrixParams();
+                virtual void patchShaderProgramWithUpdatedMatrices();
                 
                 //! sets the render state color write
                 virtual void setGLRenderStateColorWrite(bool enabled);

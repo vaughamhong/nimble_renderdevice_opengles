@@ -24,16 +24,15 @@ using namespace nimble::renderdevice::opengles_3_0;
 //! \param pFrameBuffer the frame buffer
 //! \return true if successful
 void RenderDevice::bindFrameBuffer(renderdevice::IFrameBuffer* pFrameBuffer){
-    // bind null frame (default) framebuffer
+    // unbinds previously bound buffer
     if(!pFrameBuffer){
         GLDEBUG(glBindFramebuffer(GL_FRAMEBUFFER, 0));
         return;
     }
-    
     // bind native frame buffer
     renderdevice::opengles_3_0::FrameBuffer* pNativeFrameBuffer = dynamic_cast<renderdevice::opengles_3_0::FrameBuffer*>(pFrameBuffer);
     if(pNativeFrameBuffer == 0){
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to bind frame buffer - invalid native frame buffer");
+        NIMBLE_LOG_ERROR("graphics", "Failed to bind frame buffer - invalid native frame buffer");
         return;
     }
     
@@ -47,22 +46,17 @@ void RenderDevice::bindFrameBuffer(renderdevice::IFrameBuffer* pFrameBuffer){
 //! sets index array
 //! \param pIndexBuffer the index array to bind
 void RenderDevice::bindIndexBuffer(renderdevice::IIndexBuffer* pIndexBuffer){
-    // make sure index buffer is valid
+    // unbinds previously bound buffer
     if(!pIndexBuffer){
-        core::logger_warning("graphics", "Failed to bind index buffer - invalid input");
+        GLDEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
         return;
     }
     //! make sure we have a valid native index buffer
     renderdevice::opengles_3_0::IndexBuffer* pNativeIndexBuffer = dynamic_cast<renderdevice::opengles_3_0::IndexBuffer*>(pIndexBuffer);
     if(!pNativeIndexBuffer){
-        core::logger_error(__LINE__, __FILE__, "graphics", "Failed to bind index buffer - invalid native index buffer");
+        NIMBLE_LOG_ERROR("graphics", "Failed to bind index buffer - invalid native index buffer");
         return;
     }
-    
-//    // early exit if already bound
-//    if(m_context.m_pIndexBuffer == pIndexBuffer){
-//        return;
-//    }
     
     // bind our array buffer
     m_context.m_pIndexBuffer = pIndexBuffer;
@@ -72,33 +66,28 @@ void RenderDevice::bindIndexBuffer(renderdevice::IIndexBuffer* pIndexBuffer){
 //! sets vertex array
 //! \param pVertexBuffer the vertex array to bind
 void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
-    // make sure vertex buffer is valid
+    // unbinds previously bound buffer
     if(!pVertexBuffer){
-        core::logger_warning("graphics", "Failed to bind vertex buffer - invalid input");
+        GLDEBUG(glBindBuffer(GL_ARRAY_BUFFER, 0));
         return;
     }
     // make sure we have a valid native vertex buffer
     renderdevice::opengles_3_0::VertexBuffer* pNativeVertexBuffer = dynamic_cast<renderdevice::opengles_3_0::VertexBuffer*>(pVertexBuffer);
     if(!pNativeVertexBuffer){
-        core::logger_warning("graphics", "Failed to bind vertex buffer - invalid native vertex buffer");
+        NIMBLE_LOG_WARNING("graphics", "Failed to bind vertex buffer - invalid native vertex buffer");
         return;
     }
     // make sure we have a shader program
     if(!m_context.m_pShaderProgram){
-        core::logger_warning("graphics", "Failed to bind vertex buffer - no shader program to bind to");
+        NIMBLE_LOG_WARNING("graphics", "Failed to bind vertex buffer - no shader program to bind to");
         return;
     }
     // make sure we have a valid native shader program
     renderdevice::opengles_3_0::ShaderProgram *pNativeShaderProgram = dynamic_cast<renderdevice::opengles_3_0::ShaderProgram*>(m_context.m_pShaderProgram);
     if(!pNativeShaderProgram){
-        core::logger_warning("graphics", "Failed to bind vertex buffer - invalid native shader program");
+        NIMBLE_LOG_WARNING("graphics", "Failed to bind vertex buffer - invalid native shader program");
         return;
     }
-    
-//    // early exit if already bound
-//    if(m_context.m_pVertexBuffer == pVertexBuffer){
-//        return;
-//    }
     
     // bind our array buffer
     m_context.m_pVertexBuffer = pVertexBuffer;
@@ -127,11 +116,11 @@ void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
         
         // bind attribute
         if(attributeHandle >= 0){
-            core::logger_info("graphics", "Binding vertex attribute %s", name);
+            NIMBLE_LOG_INFO("graphics", "Binding vertex attribute %s", name);
             GLDEBUG(glEnableVertexAttribArray(attributeHandle));
             GLDEBUG(glVertexAttribPointer(attributeHandle, dimension, type, normalize, (int32_t)vertexStride, (const GLvoid*)offset));
         }else{
-            core::logger_info("graphics", "Failed to bind vertex attribute %s", name);
+            NIMBLE_LOG_INFO("graphics", "Failed to bind vertex attribute %s", name);
         }
     }
 }
@@ -142,11 +131,9 @@ void RenderDevice::bindVertexBuffer(renderdevice::IVertexBuffer* pVertexBuffer){
 //! \param textureUnit the index of the texture unit to replace
 //! \param pTexture the texture data
 void RenderDevice::bindTexture(uint32_t textureUnit, renderdevice::ITexture* pTexture){
-    core::logger_info("graphics", "???????????");
-
     //  make sure we have a valid shader program to bind to
     if(!m_context.m_pShaderProgram){
-        core::logger_warning("graphics", "No shader program to bind to");
+        NIMBLE_LOG_WARNING("graphics", "Failed to bind texture - no shader program is present");
         return;
     }
     // unbind if null texture
@@ -178,18 +165,13 @@ void RenderDevice::bindShaderProgram(renderdevice::IShaderProgram* pShaderProgra
     // invalidate bound vertex / index buffers
     m_context.m_pVertexBuffer = 0;
     m_context.m_pIndexBuffer = 0;
+    m_context.m_pShaderProgram = 0;
     
-//    // early exit if already bound
-//    if(m_context.m_pShaderProgram == pShaderProgram){
-//        return;
-//    }
     // unbinding shader program
     if(pShaderProgram == 0){
         GLDEBUG(glUseProgram(0));
+        return;
     }
-    
-    // update our internal context state
-    m_context.m_pShaderProgram = pShaderProgram;
     
     // make sure we have a valid native shader program
     renderdevice::opengles_3_0::ShaderProgram *pNativeShaderProgram = dynamic_cast<renderdevice::opengles_3_0::ShaderProgram*>(pShaderProgram);
@@ -198,15 +180,17 @@ void RenderDevice::bindShaderProgram(renderdevice::IShaderProgram* pShaderProgra
     }
     
     // bind shader program
+    m_context.m_pShaderProgram = pShaderProgram;
     GLint shaderProgramHandle = pNativeShaderProgram->getShaderProgramHandle();
     GLDEBUG(glUseProgram(shaderProgramHandle));
     
     // track which matrix params this program will need filling
-#define SHADERPARAM_TUPLE(NAME, SHADERNAME) \
-m_context.m_shaderHas##NAME##ShaderParam = pNativeShaderProgram->existsParamWithName(SHADERNAME); \
-m_context.m_final##NAME##MatrixChanged = true;
-    SHADERPARAM_TUPLESET
-#undef SHADERPARAM_TUPLE
+    // invalidate needed matrices so they will be patched on the next render cycle.
+    #define SHADERPARAM_TUPLE(NAME, SHADERNAME) \
+        m_context.m_shaderHas##NAME##ShaderParam = pNativeShaderProgram->existsParamWithName(SHADERNAME); \
+        m_context.m_final##NAME##MatrixChanged = true;
+        SHADERPARAM_TUPLESET
+    #undef SHADERPARAM_TUPLE
 }
 
 ////////////////////////////////////////////////////////////////////////////

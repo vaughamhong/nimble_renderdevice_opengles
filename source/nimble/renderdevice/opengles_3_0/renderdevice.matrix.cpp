@@ -15,7 +15,7 @@ using namespace nimble::renderdevice::opengles_3_0;
 //////////////////////////////////////////////////////////////////////////
 
 //! Sets our shader program matrix states
-void RenderDevice::patchShaderProgramMatrixParams(){
+void RenderDevice::patchShaderProgramWithUpdatedMatrices(){
     if(m_context.m_pShaderProgram){
         // if the shader has a matrix param and it has changed, patch the shader with the new param
         #define SHADERPARAM_TUPLE(NAME, SHADERNAME) \
